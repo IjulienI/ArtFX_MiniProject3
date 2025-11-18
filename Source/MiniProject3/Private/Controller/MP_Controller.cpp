@@ -5,6 +5,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "Controller/MP_WallRunController.h"
+#include "DataAsset/MP_WallRunDataAsset.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Gameplay/MP_WallRunComponent.h"
 #include "MiniProject3/Public/Gameplay/MP_BaseCharacter.h"
@@ -26,7 +27,7 @@ void AMP_Controller::SetupInputComponent()
     // Base movements
     EnhancedInputComponent->BindAction(InputActionMove, ETriggerEvent::Triggered, this, &AMP_Controller::MovePlayer);
     EnhancedInputComponent->BindAction(InputActionTurn, ETriggerEvent::Triggered, this, &AMP_Controller::TurnPlayer);
-    EnhancedInputComponent->BindAction(InputActionSprint, ETriggerEvent::Started, this, &AMP_Controller::StartSprintPlayer);
+    EnhancedInputComponent->BindAction(InputActionSprint, ETriggerEvent::Triggered, this, &AMP_Controller::StartSprintPlayer);
     EnhancedInputComponent->BindAction(InputActionSprint, ETriggerEvent::Completed, this, &AMP_Controller::StopSprintPlayer);
     EnhancedInputComponent->BindAction(InputActionJump, ETriggerEvent::Started, this, &AMP_Controller::StartJumpPlayer);
     EnhancedInputComponent->BindAction(InputActionJump, ETriggerEvent::Completed, this, &AMP_Controller::StopJumpPlayer);
@@ -64,12 +65,16 @@ void AMP_Controller::MovePlayer(const FInputActionValue& Value)
     
     if (MoveValue.X)
     {
-        Character->AddMovementInput(Character->GetActorRightVector(), MoveValue.X);
+        float value = bIsOnWall ? 0.0f :MoveValue.X;
+        Character->AddMovementInput(Character->GetActorRightVector(), value);
     }
     if (MoveValue.Y)
     {
+        float value = MoveValue.Y > 0 ? 1.0f : MoveValue.Y;
+        value = bIsOnWall ? value : MoveValue.Y;
+        
         FVector Dir = bIsOnWall ? OverrideDirection : Character->GetActorForwardVector();
-        Character->AddMovementInput(Dir, MoveValue.Y);
+        Character->AddMovementInput(Dir, value);
     }
 }
 
@@ -95,8 +100,14 @@ void AMP_Controller::StartSprintPlayer(const FInputActionValue& Value)
     // Todo : Bind data asset for speed
     if (!ensure(CharacterMovementComponent.IsValid())) return;
 
-    CharacterMovementComponent->MaxWalkSpeed = 800.0f;
+    float RunMaxSpeed = 800.0f;
+    if (WallRunDataAsset)
+    {
+        RunMaxSpeed =  bIsOnWall ? WallRunDataAsset->MaxRunSpeedOnWall : RunMaxSpeed;
+    }
+    CharacterMovementComponent->MaxWalkSpeed = RunMaxSpeed;
 
+    GEngine->AddOnScreenDebugMessage(0, 0.5f, FColor::Red,  FString::Printf(TEXT("Sprinting speed : %f"), CharacterMovementComponent->MaxWalkSpeed));
 }
 
 void AMP_Controller::StopSprintPlayer(const FInputActionValue& Value)

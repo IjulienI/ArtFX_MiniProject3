@@ -26,6 +26,7 @@ public:
 
 	// jump of wall
 public:
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void JumpOfWall();
 
 	// data Asset

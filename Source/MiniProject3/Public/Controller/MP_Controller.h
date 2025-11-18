@@ -71,6 +71,11 @@ protected:
     float SensitivityY = 0.8f;
 
 protected:
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "WallRun")
     FVector OverrideDirection = FVector(0);
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "WallRun")
     bool bIsOnWall = false;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Wall Run|Data Asset")
+    TObjectPtr<class UMP_WallRunDataAsset> WallRunDataAsset{nullptr};
+
 };

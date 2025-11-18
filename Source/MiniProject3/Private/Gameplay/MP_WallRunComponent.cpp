@@ -19,8 +19,4 @@ void UMP_WallRunComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
 
-void UMP_WallRunComponent::JumpOfWall()
-{
-	GEngine->AddOnScreenDebugMessage(0, 5, FColor::Red, "Jump of Wall");
-}
 
