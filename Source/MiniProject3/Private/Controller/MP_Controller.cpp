@@ -5,6 +5,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "Controller/MP_WallRunController.h"
+#include "Controller/MP_DashController.h"
 #include "DataAsset/MP_PlayerDataAsset.h"
 #include "DataAsset/MP_WallRunDataAsset.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -50,7 +51,12 @@ void AMP_Controller::SetPawn(APawn* InPawn)
     {
         WallRunController->SetupInputComponentGravityGun(InputComponent, InPawn);
     }
-    
+
+    DashController = FindComponentByClass<UMP_DashController>();
+    if (DashController.IsValid())
+    {
+        DashController->SetupInputComponentDash(InputComponent, InPawn);
+    }
     // Exemple : 
     // GravityGunController = FindComponentByClass<UCC_GravityGunController>();
     // if (GravityGunController.IsValid())
