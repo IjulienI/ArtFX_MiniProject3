@@ -46,7 +46,7 @@ void UMP_DashController::StartDashPlayer()
 {
 	if (DashComponent.IsValid())
 	{
-		//DashComponent->OnDashInputPressed();
+		DashComponent->OnDashInputPressed();
 	}
 }
 

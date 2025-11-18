@@ -23,7 +23,7 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 protected:
-	TWeakObjectPtr<class AMainCharacter> Character = nullptr;
+	TWeakObjectPtr<class AMP_BaseCharacter> Character = nullptr;
 
 	//Inputs
 public:
@@ -35,19 +35,11 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Dash")
 	TEnumAsByte<ETraceTypeQuery> DashTraceChannel;
 	ECollisionChannel DashCollisionChannel;
-	UPROPERTY(EditDefaultsOnly, Category = "Dash", meta = (ClampMin = "100.0", ClampMax = "10000.0", Units = "Centimeters"))
-	float DashRaycastSize = 1000.f;
 	//End of collisions	
-
-	//Curve
-protected:
-	UPROPERTY(EditDefaultsOnly, Category = "Dash|Curve")
-	TObjectPtr<class UCurveFloat> DashSpeedCurve = nullptr;
-	//End of curve
 
 	//Data Asset
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Dash|Data Asset")
-	TObjectPtr<UMP_DashDataAsset> GravityDataAsset = nullptr;
+	TObjectPtr<UMP_DashDataAsset> DashDataAsset = nullptr;
 	//End of Data Asset
 };

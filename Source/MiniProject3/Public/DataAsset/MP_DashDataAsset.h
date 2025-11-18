@@ -12,7 +12,7 @@ class MINIPROJECT3_API UMP_DashDataAsset : public UDataAsset
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, meta = (Units = "Centimeters"))
+	UPROPERTY(EditAnywhere, meta = (ClampMin = "100.0", ClampMax = "10000.0", Units = "Centimeters"))
 	float DashDistance = 500.f;
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0.1", ClampMax = "60.0", Units = "Seconds"))
 	float DashCooldown = 2.f;
