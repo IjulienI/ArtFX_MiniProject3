@@ -7,6 +7,7 @@
 #include "MP_SlidingComponent.generated.h"
 
 
+class UMP_SlideDataAsset;
 class UCharacterMovementComponent;
 
 UCLASS(Abstract, Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
@@ -21,47 +22,58 @@ public:
     void StartSliding();
     void StopSliding();
 
+    bool GetIsSliding();
+
 protected:
     virtual void BeginPlay() override;
     virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-    //References
+
+    // VISIBLE SETTINGS ------------------------------------------------------------------------
+    
+    // Traces Info
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Slide")
-    TWeakObjectPtr<ACharacter> Character;
+    TEnumAsByte<ECollisionChannel> TraceCollisionChannel = ECollisionChannel::ECC_Visibility;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Slide")
+    UMP_SlideDataAsset* SlidingDataAsset = nullptr;
+    
+
+    // HIDDEN SETTINGS -------------------------------------------------------------------------
+    
+    //References
+    UPROPERTY(BlueprintReadOnly, Category="Slide")
+    TWeakObjectPtr<ACharacter> Character;
+
+    UPROPERTY(BlueprintReadOnly, Category="Slide")
     TWeakObjectPtr<UCharacterMovementComponent> CharacterMovementComponent;
 
     // Sliding Conditions
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Slide")
+    UPROPERTY(BlueprintReadOnly, Category="Slide")
     bool bCanSlide = true;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Slide")
+    UPROPERTY(BlueprintReadOnly, Category="Slide")
     bool bIsSliding = false;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Slide")
+    UPROPERTY(BlueprintReadOnly, Category="Slide")
     bool bJustChangedState = false;
 
     // Sliding Values
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Slide")
+    UPROPERTY(BlueprintReadOnly, Category="Slide")
     float TargetCapsuleHeigth = 55.0f;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Slide")
+    UPROPERTY(BlueprintReadOnly, Category="Slide")
     FVector Velocity = FVector::ZeroVector;
 
     // Cached Base Values
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Slide|Cached")
+    UPROPERTY(BlueprintReadOnly, Category="Slide|Cached")
     float BaseCapsuleHeight = 0.0f;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Slide|Cached")
+    UPROPERTY(BlueprintReadOnly, Category="Slide|Cached")
     float BaseBrakingDecelerationWalking = 0.0f;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Slide|Cached")
+    UPROPERTY(BlueprintReadOnly, Category="Slide|Cached")
     float BaseBrakingFrictionFactor = 0.0f;
-
-    // Traces Info
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Slide|Trace")
-    TEnumAsByte<ECollisionChannel> TraceCollisionChannel = ECollisionChannel::ECC_Visibility;
     
     // Timers
     FTimerHandle ResetCanSlideTimerHandle;

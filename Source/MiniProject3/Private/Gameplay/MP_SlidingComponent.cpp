@@ -6,6 +6,7 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "MiniProject3/Public/DataAsset/MP_SlideDataAsset.h"
 
 
 UMP_SlidingComponent::UMP_SlidingComponent()
@@ -22,20 +23,20 @@ void UMP_SlidingComponent::StartSliding()
     bJustChangedState = true;
     
     CharacterMovementComponent->BrakingDecelerationWalking = 0;
-    CharacterMovementComponent->BrakingFrictionFactor = 0; // Todo : DataAssetValue
-    TargetCapsuleHeigth = 55.0f; // Todo : DataAssetValue
+    CharacterMovementComponent->BrakingFrictionFactor = SlidingDataAsset->SlideBrakingFactor;
+    TargetCapsuleHeigth = SlidingDataAsset->SlideCapsuleHeight;
 
     const FVector OwnerForward = Character->GetActorForwardVector();
     const float OwnerVelocityLength = Character->GetVelocity().Size();
     const float ImpulseAmount = FMath::GetMappedRangeValueClamped(FVector2f(600.0f, 800.0f), FVector2f(0.0f, 1.0f), OwnerVelocityLength); // todo : 600/800 = Player speed from DataAsset
-    const FVector SlidingImpulse = OwnerForward * ImpulseAmount * 800.0f; // todo : 800 = SlideForce from DataAsset
+    const FVector SlidingImpulse = OwnerForward * ImpulseAmount * SlidingDataAsset->SlideForce;
 
     CharacterMovementComponent->AddImpulse(SlidingImpulse, true);
 
-    Velocity = Character->GetVelocity().GetClampedToSize(0, 800.0f); // todo : 800 = SlideForce from DataAsset
+    Velocity = Character->GetVelocity().GetClampedToSize(0, SlidingDataAsset->SlideForce);
 
     auto& TimerManager = GetWorld()->GetTimerManager();
-    TimerManager.SetTimer(ResetCanSlideTimerHandle, this, &UMP_SlidingComponent::ResetCanSlide, 1.0f, false); // Todo : 1.0f = SlideCooldown from Data Asset
+    TimerManager.SetTimer(ResetCanSlideTimerHandle, this, &UMP_SlidingComponent::ResetCanSlide, SlidingDataAsset->SlideCooldown, false);
     TimerManager.SetTimer(CheckSpeedTimerHandle, this, &UMP_SlidingComponent::CheckSpeed, 0.2f, true);
     TimerManager.SetTimer(CheckIfFallingTimerHandle, this, &UMP_SlidingComponent::CheckIfFalling, 0.1f, true);
 }
@@ -54,9 +55,16 @@ void UMP_SlidingComponent::StopSliding()
     TimerManager.ClearTimer(CheckIfFallingTimerHandle);
 }
 
+bool UMP_SlidingComponent::GetIsSliding()
+{
+    return bIsSliding;
+}
+
 void UMP_SlidingComponent::BeginPlay()
 {
     Super::BeginPlay();
+    
+    ensureMsgf(SlidingDataAsset, TEXT("Please put a data asset in the AC_SlidingComponent"));
     
     Character = Cast<ACharacter>(GetOwner());
     // Check if the owner is valid
@@ -81,7 +89,7 @@ void UMP_SlidingComponent::TickComponent(float DeltaTime, enum ELevelTick TickTy
 
     Character->GetCapsuleComponent()->SetCapsuleSize(Character->GetCapsuleComponent()->GetScaledCapsuleRadius(), NewCapsuleHeight);
 
-    if (FMath::IsNearlyEqual(TargetCapsuleHeigth, 44.0f))
+    if (FMath::IsNearlyEqual(TargetCapsuleHeigth, SlidingDataAsset->SlideCapsuleHeight))
     {
         bJustChangedState = false;
     }
@@ -95,14 +103,14 @@ void UMP_SlidingComponent::ResetCanSlide()
 void UMP_SlidingComponent::CheckSpeed()
 {
     const float OwnerVelocityLength = Character->GetVelocity().Size();
-    if (OwnerVelocityLength <= 300.0f) StopSliding(); // Todo : 300.0f = Slide Minimum Velocity from Data Asset
+    if (OwnerVelocityLength <= SlidingDataAsset->SlideMinimumVelocity) StopSliding();
 }
 
 void UMP_SlidingComponent::CheckIfFalling()
 {
     const FVector OwnerLocation = GetOwner()->GetActorLocation();
     const FVector OwnerUp = Character->GetActorUpVector();
-    constexpr  float FloorDetectionDistance = 200.0f * -1.0f; // Todo : 200.0f = SlideFloorDetection from Data Asset
+    const  float FloorDetectionDistance = SlidingDataAsset->SlideFloorDetectionLenght * -1.0f;
     const FVector EndTrace = OwnerLocation + OwnerUp * FloorDetectionDistance;
 
     FCollisionQueryParams Params;
@@ -133,6 +141,6 @@ void UMP_SlidingComponent::CheckIfFalling()
         FVector VelocityNormalized = OwnerVelocity;
         VelocityNormalized.Normalize();
         
-        CharacterMovementComponent->AddImpulse(VelocityNormalized * FMath::Lerp(0.0f, 1200.0f, FloorAlignmentInverse)); //Todo : 1200.0f = SlideSlopeAcceleration from Data Asset
+        CharacterMovementComponent->AddImpulse(VelocityNormalized * FMath::Lerp(0.0f, SlidingDataAsset->SlideSlopeAcceleration, FloorAlignmentInverse));
     }
 }
