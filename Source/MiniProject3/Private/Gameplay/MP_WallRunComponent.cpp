@@ -5,7 +5,7 @@
 
 UMP_WallRunComponent::UMP_WallRunComponent()
 {
-	PrimaryComponentTick.bCanEverTick = false;
+	PrimaryComponentTick.bCanEverTick = true;
 }
 
 void UMP_WallRunComponent::BeginPlay()

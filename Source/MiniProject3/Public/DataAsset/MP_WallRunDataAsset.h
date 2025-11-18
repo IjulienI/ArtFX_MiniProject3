@@ -19,4 +19,10 @@ public:
 	float JumpForce = 1000.0f;
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "10.0", ClampMax = "100000.0"))
 	float MaxRunSpeedOnWall = 1000.0f;
+	UPROPERTY(EditAnywhere, meta = (ClampMin = "10.0", ClampMax = "1000.0"))
+	float DetectionRayWidthSize = 100.0f;
+	UPROPERTY(EditAnywhere, meta = (ClampMin = "10.0", ClampMax = "1000.0"))
+	float DetectionRayZOffset = 60.0f;
+	UPROPERTY(EditAnywhere, meta = (ClampMin = "10.0", ClampMax = "1000.0"))
+	float CharacterMeshTiltAngle = 20.0f;
 };

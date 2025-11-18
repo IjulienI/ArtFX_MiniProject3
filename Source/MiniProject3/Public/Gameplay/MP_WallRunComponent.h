@@ -30,7 +30,17 @@ public:
 
 	// data Asset
 protected:
-	UPROPERTY(EditDefaultsOnly, Category = "Wall Run|Data Asset")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Wall Run|Data Asset")
 	TObjectPtr<UMP_WallRunDataAsset> WallRunDataAsset{nullptr};
-		
+
+	// wall run
+public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Wall Run")
+	float CharacterPitchCurrentTilt = 0.0f;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Wall Run")
+	bool bHasHitWall = false;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Wall Run")
+	FHitResult HitWall;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Wall Run")
+	bool bCanCheck = true;
 };

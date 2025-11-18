@@ -39,7 +39,7 @@ void AMP_Controller::SetPawn(APawn* InPawn)
     if (Character.IsValid()) return;
     
     Character = Cast<AMP_BaseCharacter>(InPawn);
-
+    
     if (!ensure(Character.IsValid())) return;
     CharacterMovementComponent = Character->GetCharacterMovement();
 
@@ -64,11 +64,12 @@ void AMP_Controller::MovePlayer(const FInputActionValue& Value)
     
     if (MoveValue.X)
     {
-        Character->AddMovementInput(Character->GetActorRightVector(),MoveValue.X);
+        Character->AddMovementInput(Character->GetActorRightVector(), MoveValue.X);
     }
     if (MoveValue.Y)
     {
-        Character->AddMovementInput(Character->GetActorForwardVector(),MoveValue.Y);
+        FVector Dir = bIsOnWall ? OverrideDirection : Character->GetActorForwardVector();
+        Character->AddMovementInput(Dir, MoveValue.Y);
     }
 }
 

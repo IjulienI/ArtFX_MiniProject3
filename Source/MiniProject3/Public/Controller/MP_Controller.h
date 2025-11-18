@@ -41,7 +41,9 @@ protected:
     void StartJumpPlayer(const FInputActionValue& Value);
     void StopJumpPlayer(const FInputActionValue& Value);
 
+public:
 
+protected:
     // Inputs
     UPROPERTY(EditDefaultsOnly, Category = "EnhancedInput")
     TObjectPtr<UInputMappingContext> InputMappingContext;
@@ -61,15 +63,14 @@ protected:
     TWeakObjectPtr<AMP_BaseCharacter> Character;
     TWeakObjectPtr<UCharacterMovementComponent> CharacterMovementComponent;
     TWeakObjectPtr<UMP_WallRunController> WallRunController;
-    // TWeakObjectPtr<UCC_GravityGunController> GravityGunController;
-    // TWeakObjectPtr<UScoreComponentController> ScoreController;
-    // TWeakObjectPtr<UCC_PickupSpawnerController> PickupSpawner;
-    // TWeakObjectPtr<UCC_PickupCountController> PickupCount;
 
     UPROPERTY(EditDefaultsOnly, Category = "EnhancedInput|Mouse", meta = (ClampMin = 0.1f, ClampMax = 100.0f))
     float SensitivityX = 0.8f;
 
-    UPROPERTY(EditDefaultsOnly, Category = "Settings|Mouse", meta = (ClampMin = 0.1f, ClampMax = 100.0f))
+    UPROPERTY(EditDefaultsOnly, Category = "EnhancedInput|Mouse", meta = (ClampMin = 0.1f, ClampMax = 100.0f))
     float SensitivityY = 0.8f;
 
+protected:
+    FVector OverrideDirection = FVector(0);
+    bool bIsOnWall = false;
 };
