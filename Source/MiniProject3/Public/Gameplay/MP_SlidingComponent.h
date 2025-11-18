@@ -21,14 +21,14 @@ public:
     // Actions
     void StartSliding();
     void StopSliding();
-
-    bool GetIsSliding();
-
+    
 protected:
     virtual void BeginPlay() override;
     virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
-
+    
+    UFUNCTION(BlueprintCallable, Category="Sliding")
+    bool GetIsSliding();
+    
     // VISIBLE SETTINGS ------------------------------------------------------------------------
     
     // Traces Info

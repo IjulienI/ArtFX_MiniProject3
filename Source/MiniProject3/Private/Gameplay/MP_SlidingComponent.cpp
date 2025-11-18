@@ -17,6 +17,8 @@ UMP_SlidingComponent::UMP_SlidingComponent()
 void UMP_SlidingComponent::StartSliding()
 {
     //  GetWorld()->GetFirstPlayerController()->ClientStopCameraShake()
+    if (!SlidingDataAsset) return;
+    
     if (CharacterMovementComponent->IsFalling() && bIsSliding && !bCanSlide) return;
     bCanSlide = false;
     bIsSliding = true;
@@ -43,6 +45,8 @@ void UMP_SlidingComponent::StartSliding()
 
 void UMP_SlidingComponent::StopSliding()
 {
+    if (!SlidingDataAsset) return;
+    
     bIsSliding = false;
 
     CharacterMovementComponent->BrakingDecelerationWalking = BaseBrakingDecelerationWalking;
@@ -63,8 +67,10 @@ bool UMP_SlidingComponent::GetIsSliding()
 void UMP_SlidingComponent::BeginPlay()
 {
     Super::BeginPlay();
-    
-    ensureMsgf(SlidingDataAsset, TEXT("Please put a data asset in the AC_SlidingComponent"));
+    if (!SlidingDataAsset)
+    {
+        UE_LOG(LogTemp, Error, TEXT("Sliding data asset is NULL"));
+    }
     
     Character = Cast<ACharacter>(GetOwner());
     // Check if the owner is valid
@@ -82,6 +88,8 @@ void UMP_SlidingComponent::TickComponent(float DeltaTime, enum ELevelTick TickTy
 {
     Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+    if (!SlidingDataAsset) return;
+    
     if (!bJustChangedState) return;
 
     const float CurrentCapsuleHeight = Character->GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
@@ -102,12 +110,16 @@ void UMP_SlidingComponent::ResetCanSlide()
 
 void UMP_SlidingComponent::CheckSpeed()
 {
+    if (!SlidingDataAsset) return;
+    
     const float OwnerVelocityLength = Character->GetVelocity().Size();
     if (OwnerVelocityLength <= SlidingDataAsset->SlideMinimumVelocity) StopSliding();
 }
 
 void UMP_SlidingComponent::CheckIfFalling()
 {
+    if (!SlidingDataAsset) return;
+    
     const FVector OwnerLocation = GetOwner()->GetActorLocation();
     const FVector OwnerUp = Character->GetActorUpVector();
     const  float FloorDetectionDistance = SlidingDataAsset->SlideFloorDetectionLenght * -1.0f;
