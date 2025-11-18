@@ -42,7 +42,9 @@ protected:
     void StartJumpPlayer(const FInputActionValue& Value);
     void StopJumpPlayer(const FInputActionValue& Value);
 
+public:
 
+protected:
     // Inputs
     UPROPERTY(EditDefaultsOnly, Category = "EnhancedInput")
     TObjectPtr<UInputMappingContext> InputMappingContext;
@@ -71,7 +73,17 @@ protected:
     UPROPERTY(EditDefaultsOnly, Category = "EnhancedInput|Mouse", meta = (ClampMin = 0.1f, ClampMax = 100.0f))
     float SensitivityX = 0.8f;
 
-    UPROPERTY(EditDefaultsOnly, Category = "Settings|Mouse", meta = (ClampMin = 0.1f, ClampMax = 100.0f))
+    UPROPERTY(EditDefaultsOnly, Category = "EnhancedInput|Mouse", meta = (ClampMin = 0.1f, ClampMax = 100.0f))
     float SensitivityY = 0.8f;
+
+protected:
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "WallRun")
+    FVector OverrideDirection = FVector(0);
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "WallRun")
+    bool bIsOnWall = false;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data Asset|Wall Run")
+    TObjectPtr<class UMP_WallRunDataAsset> WallRunDataAsset{nullptr};
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data Asset|Player")
+    TObjectPtr<class UMP_PlayerDataAsset> PlayerDataAsset{nullptr};
 
 };
