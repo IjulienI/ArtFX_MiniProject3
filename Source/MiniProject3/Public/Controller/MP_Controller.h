@@ -8,6 +8,7 @@
 
 class UMP_SlidingController;
 class UMP_WallRunController;
+class UMP_DashController;
 class UInputMappingContext;
 struct FInputActionValue;
 class UInputAction;
@@ -67,6 +68,11 @@ protected:
     // TWeakObjectPtr<UCC_PickupSpawnerController> PickupSpawner;
     // TWeakObjectPtr<UCC_PickupCountController> PickupCount;
     TWeakObjectPtr<UMP_WallRunController> WallRunController;
+    TWeakObjectPtr<UMP_DashController> DashController;
+    // TWeakObjectPtr<UCC_GravityGunController> GravityGunController;
+    // TWeakObjectPtr<UScoreComponentController> ScoreController;
+    // TWeakObjectPtr<UCC_PickupSpawnerController> PickupSpawner;
+    // TWeakObjectPtr<UCC_PickupCountController> PickupCount;
 
     UPROPERTY(EditDefaultsOnly, Category = "EnhancedInput|Mouse", meta = (ClampMin = 0.1f, ClampMax = 100.0f))
     float SensitivityX = 0.8f;
