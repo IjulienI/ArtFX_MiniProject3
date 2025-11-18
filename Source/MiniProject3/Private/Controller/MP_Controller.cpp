@@ -4,7 +4,9 @@
 #include "MiniProject3/Public/Controller/MP_Controller.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+#include "Controller/MP_WallRunController.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Gameplay/MP_WallRunComponent.h"
 #include "MiniProject3/Public/Gameplay/MP_BaseCharacter.h"
 
 
@@ -40,6 +42,12 @@ void AMP_Controller::SetPawn(APawn* InPawn)
 
     if (!ensure(Character.IsValid())) return;
     CharacterMovementComponent = Character->GetCharacterMovement();
+
+    WallRunController = FindComponentByClass<UMP_WallRunController>();
+    if (WallRunController.IsValid())
+    {
+        WallRunController->SetupInputComponentGravityGun(InputComponent, InPawn);
+    }
     
     // Exemple : 
     // GravityGunController = FindComponentByClass<UCC_GravityGunController>();
