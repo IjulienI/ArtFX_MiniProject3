@@ -17,7 +17,7 @@ public:
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0.1", ClampMax = "60.0", Units = "Seconds"))
 	float DashCooldown = 2.f;
 	UPROPERTY(EditAnywhere, Category = "Speed")
-	bool bSpeedCurve = false;
+	bool bUseSpeedCurve = false;
 	UPROPERTY(EditAnywhere, Category = "Speed", meta = (EditCondition = "bSpeedCurve", EditConditionHides))
 	TObjectPtr<class UCurveFloat> DashSpeedCurve = nullptr;
 	UPROPERTY(EditAnywhere, Category = "Speed", meta = (EditCondition = "!bSpeedCurve", EditConditionHides, Units = "CentimetersPerSecond"))

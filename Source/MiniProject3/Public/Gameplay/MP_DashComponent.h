@@ -35,6 +35,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Dash")
 	TEnumAsByte<ETraceTypeQuery> DashTraceChannel;
 	ECollisionChannel DashCollisionChannel;
+	FVector RaycastStart;
+	FVector RaycastEnd;
 	//End of collisions	
 
 	//Data Asset
@@ -47,8 +49,10 @@ protected:
 protected:
 	FTimerHandle DashCooldownTimerHangle;
 	bool bCanDash = true;
+	float ActualTime = 0.f;
 
 protected:
 	void ResetCooldown();
+	void ActualiseDashTimeline();
 	//End of Cooldown
 };
