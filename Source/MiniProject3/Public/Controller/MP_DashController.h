@@ -15,7 +15,6 @@ class MINIPROJECT3_API UMP_DashController : public UActorComponent
 	GENERATED_BODY()
 
 public:	
-	// Sets default values for this component's properties
 	UMP_DashController();
 	void SetupInputComponentDash(TObjectPtr<class UInputComponent> InputComponent, class APawn* InPawn);
 

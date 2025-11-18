@@ -42,4 +42,13 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Dash|Data Asset")
 	TObjectPtr<UMP_DashDataAsset> DashDataAsset = nullptr;
 	//End of Data Asset
+
+	//Cooldown
+protected:
+	FTimerHandle DashCooldownTimerHangle;
+	bool bCanDash = true;
+
+protected:
+	void ResetCooldown();
+	//End of Cooldown
 };

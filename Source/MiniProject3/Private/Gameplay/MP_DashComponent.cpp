@@ -35,13 +35,30 @@ void UMP_DashComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 
 void UMP_DashComponent::OnDashInputPressed()
 {
-	if (!Character.IsValid() || DashDataAsset == nullptr)
+	if (!Character.IsValid() || DashDataAsset == nullptr || !bCanDash)
 	{
 		return;
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("It's work"));
+	UE_LOG(LogTemp, Warning, TEXT("Dash"));
 
-	//dash logic
+	// Dash cooldownGet Timer
+	bCanDash = false;
+	float TimeToDashCooldown = DashDataAsset->DashCooldown;
+
+	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
+	TimerManager.ClearTimer(DashCooldownTimerHangle);
+	TimerManager.SetTimer(DashCooldownTimerHangle, this, &UMP_DashComponent::ResetCooldown, TimeToDashCooldown, false);
+
+	// Dash logic
+}
+
+void UMP_DashComponent::ResetCooldown()
+{
+	bCanDash = true;
+
+	//Clear Timer
+	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
+	TimerManager.ClearTimer(DashCooldownTimerHangle);
 }
 
