@@ -13,4 +13,7 @@ class MINIPROJECT3_API AMP_BaseCharacter : public ACharacter
 
 public:
     AMP_BaseCharacter();
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player|Data Asset")
+    TObjectPtr<class UMP_PlayerDataAsset> PlayerDataAsset{nullptr};
 };

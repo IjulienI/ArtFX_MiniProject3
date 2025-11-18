@@ -75,7 +75,9 @@ protected:
     FVector OverrideDirection = FVector(0);
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "WallRun")
     bool bIsOnWall = false;
-    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Wall Run|Data Asset")
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data Asset|Wall Run")
     TObjectPtr<class UMP_WallRunDataAsset> WallRunDataAsset{nullptr};
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Data Asset|Player")
+    TObjectPtr<class UMP_PlayerDataAsset> PlayerDataAsset{nullptr};
 
 };
