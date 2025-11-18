@@ -13,7 +13,6 @@ UMP_DashComponent::UMP_DashComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
-
 void UMP_DashComponent::BeginPlay()
 {
 	Super::BeginPlay();
@@ -25,7 +24,6 @@ void UMP_DashComponent::BeginPlay()
 	DashCollisionChannel = UEngineTypes::ConvertToCollisionChannel(DashTraceChannel);
 
 }
-
 
 void UMP_DashComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
@@ -44,10 +42,7 @@ void UMP_DashComponent::OnDashInputPressed()
 		return;
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("Dash"));
-
 	// Dash cooldown Get Timer
-	
 	float TimeToDashCooldown = DashDataAsset->DashCooldown;
 
 	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
@@ -67,14 +62,10 @@ void UMP_DashComponent::OnDashInputPressed()
 		
 	if(bHit)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("YES"));
 		RaycastEnd = HitResult.ImpactPoint;
 	}
-	else 
-	{
-		UE_LOG(LogTemp, Warning, TEXT("FALSE"));
-	}
-	ActualTime = 0;
+
+	ActualDashTime = 0;
 	bCanDash = false;
 }
 
@@ -89,19 +80,22 @@ void UMP_DashComponent::ResetCooldown()
 
 void UMP_DashComponent::ActualiseDashTimeline()
 {
-	ActualTime += GetWorld()->GetDeltaSeconds();
+	ActualDashTime += GetWorld()->GetDeltaSeconds();
 
-	if (DashDataAsset->bUseSpeedCurve && DashDataAsset->DashSpeedCurve != nullptr)
-	{
-		//Character->SetActorLocation(FVector{ FMath::Lerp(0, 1, ActualTime / (DashDataAsset->DashDistance / DashDataAsset->DashLinearSpeed)),1.f,1.f });
+	if (DashDataAsset->bUseSpeedCurve && DashDataAsset->DashSpeedCurve != nullptr && ActualDashTime * DashDataAsset->DashPlayRate < 1)
+	{		
 		// Dash whith speed curve
+		float alfa = DashDataAsset->DashSpeedCurve->GetFloatValue(ActualDashTime * DashDataAsset->DashPlayRate / 1);
+		Character->SetActorLocation(FVector{ FMath::Lerp(RaycastStart.X, RaycastEnd.X, alfa)
+											,FMath::Lerp(RaycastStart.Y, RaycastEnd.Y, alfa)
+											,FMath::Lerp(RaycastStart.Z, RaycastEnd.Z, alfa) });
 	}
-	else if (ActualTime / (DashDataAsset->DashDistance / DashDataAsset->DashLinearSpeed) < 1)
+	else if (ActualDashTime / (DashDataAsset->DashDistance / DashDataAsset->DashLinearSpeed) < 1)
 	{
-		Character->SetActorLocation(FVector{ FMath::Lerp(RaycastStart.X, RaycastEnd.X, ActualTime / (DashDataAsset->DashDistance / DashDataAsset->DashLinearSpeed))
-											,FMath::Lerp(RaycastStart.Y, RaycastEnd.Y, ActualTime / (DashDataAsset->DashDistance / DashDataAsset->DashLinearSpeed))
-											,FMath::Lerp(RaycastStart.Z, RaycastEnd.Z, ActualTime / (DashDataAsset->DashDistance / DashDataAsset->DashLinearSpeed)) });
 		// Dash whith linear speed 
+		float alfa = ActualDashTime / (DashDataAsset->DashDistance / DashDataAsset->DashLinearSpeed);
+		Character->SetActorLocation(FVector{ FMath::Lerp(RaycastStart.X, RaycastEnd.X, alfa)
+											,FMath::Lerp(RaycastStart.Y, RaycastEnd.Y, alfa)
+											,FMath::Lerp(RaycastStart.Z, RaycastEnd.Z, alfa) });
 	}
 }
-

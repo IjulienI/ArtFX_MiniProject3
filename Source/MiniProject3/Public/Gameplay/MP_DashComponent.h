@@ -49,7 +49,7 @@ protected:
 protected:
 	FTimerHandle DashCooldownTimerHangle;
 	bool bCanDash = true;
-	float ActualTime = 0.f;
+	float ActualDashTime = 0.f;
 
 protected:
 	void ResetCooldown();
