@@ -12,7 +12,7 @@ class MINIPROJECT3_API UMP_DashDataAsset : public UDataAsset
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, meta = (Units = "Centimeters"))
 	float DashDistance = 500.f;
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0.1", ClampMax = "60.0", Units = "Seconds"))
 	float DashCooldown = 2.f;
@@ -20,6 +20,6 @@ public:
 	bool bSpeedCurve = false;
 	UPROPERTY(EditAnywhere, Category = "Speed", meta = (EditCondition = "bSpeedCurve", EditConditionHides))
 	TObjectPtr<class UCurveFloat> DashSpeedCurve = nullptr;
-	UPROPERTY(EditAnywhere, Category = "Speed", meta = (EditCondition = "bSpeedCurve", EditConditionHides, Units = "CentimetersPerSecond"))
+	UPROPERTY(EditAnywhere, Category = "Speed", meta = (EditCondition = "!bSpeedCurve", EditConditionHides, Units = "CentimetersPerSecond"))
 	float DashLinearSpeed = 500.f;
 };
