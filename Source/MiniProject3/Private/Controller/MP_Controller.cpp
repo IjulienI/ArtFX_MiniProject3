@@ -5,6 +5,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "Controller/MP_WallRunController.h"
+#include "DataAsset/MP_PlayerDataAsset.h"
 #include "DataAsset/MP_WallRunDataAsset.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Gameplay/MP_WallRunComponent.h"
@@ -100,7 +101,7 @@ void AMP_Controller::StartSprintPlayer(const FInputActionValue& Value)
     // Todo : Bind data asset for speed
     if (!ensure(CharacterMovementComponent.IsValid())) return;
 
-    float RunMaxSpeed = 800.0f;
+    float RunMaxSpeed = PlayerDataAsset ? PlayerDataAsset->RunSpeed : 800.0f;
     if (WallRunDataAsset)
     {
         RunMaxSpeed =  bIsOnWall ? WallRunDataAsset->MaxRunSpeedOnWall : RunMaxSpeed;
@@ -115,7 +116,7 @@ void AMP_Controller::StopSprintPlayer(const FInputActionValue& Value)
     // Todo : Bind data asset for speed
     if (!ensure(CharacterMovementComponent.IsValid())) return;
 
-    CharacterMovementComponent->MaxWalkSpeed = 600.0f;
+    CharacterMovementComponent->MaxWalkSpeed = PlayerDataAsset ? PlayerDataAsset->WalkSpeed : 600.0f;
 }
 
 void AMP_Controller::StartJumpPlayer(const FInputActionValue& Value)
