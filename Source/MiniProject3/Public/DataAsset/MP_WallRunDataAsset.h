@@ -1,0 +1,22 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "Engine/DataAsset.h"
+#include "MP_WallRunDataAsset.generated.h"
+
+/**
+ * 
+ */
+UCLASS()
+class MINIPROJECT3_API UMP_WallRunDataAsset : public UDataAsset
+{
+	GENERATED_BODY()
+	
+public:
+	UPROPERTY(EditAnywhere, meta = (ClampMin = "10.0", ClampMax = "100000.0"))
+	float JumpForce = 1000.0f;
+	UPROPERTY(EditAnywhere, meta = (ClampMin = "10.0", ClampMax = "100000.0"))
+	float MaxRunSpeedOnWall = 1000.0f;
+};

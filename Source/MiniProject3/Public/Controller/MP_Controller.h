@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "MP_Controller.generated.h"
 
+class UMP_WallRunController;
 class UInputMappingContext;
 struct FInputActionValue;
 class UInputAction;
@@ -59,6 +60,7 @@ protected:
 
     TWeakObjectPtr<AMP_BaseCharacter> Character;
     TWeakObjectPtr<UCharacterMovementComponent> CharacterMovementComponent;
+    TWeakObjectPtr<UMP_WallRunController> WallRunController;
     // TWeakObjectPtr<UCC_GravityGunController> GravityGunController;
     // TWeakObjectPtr<UScoreComponentController> ScoreController;
     // TWeakObjectPtr<UCC_PickupSpawnerController> PickupSpawner;
