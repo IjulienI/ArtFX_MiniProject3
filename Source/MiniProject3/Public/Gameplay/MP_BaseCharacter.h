@@ -26,6 +26,6 @@ public:
     virtual void Landed(const FHitResult& Hit) override;
 
 protected:
-    UPROPERTY(BlueprintReadOnly, Category = "Player")
+    UPROPERTY(BlueprintReadWrite, Category = "Player")
     int CurrentLife = 1;
 };
