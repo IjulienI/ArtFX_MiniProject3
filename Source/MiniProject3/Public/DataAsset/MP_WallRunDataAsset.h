@@ -23,6 +23,8 @@ public:
 	float DetectionRayWidthSize = 100.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "10.0", ClampMax = "1000.0"), Category = "WallRun")
 	float DetectionRayZOffset = 60.0f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "10.0", ClampMax = "1000.0"), Category = "WallRun")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0.0", ClampMax = "90.0"), Category = "WallRun")
 	float CharacterMeshTiltAngle = 20.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0.0", ClampMax = "90.0"), Category = "WallRun")
+	float JumpOfWallUpAngleDirection = 20.0f;
 };
