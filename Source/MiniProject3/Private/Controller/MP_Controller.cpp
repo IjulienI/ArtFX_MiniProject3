@@ -111,15 +111,8 @@ void AMP_Controller::StartSprintPlayer(const FInputActionValue& Value)
 {
     // Todo : Bind data asset for speed
     if (!ensure(CharacterMovementComponent.IsValid())) return;
-
-    float RunMaxSpeed = PlayerDataAsset ? PlayerDataAsset->RunSpeed : 800.0f;
-    if (WallRunDataAsset)
-    {
-        RunMaxSpeed =  bIsOnWall ? WallRunDataAsset->MaxRunSpeedOnWall : RunMaxSpeed;
-    }
-    CharacterMovementComponent->MaxWalkSpeed = RunMaxSpeed;
-
-    GEngine->AddOnScreenDebugMessage(0, 0.5f, FColor::Red,  FString::Printf(TEXT("Sprinting speed : %f"), CharacterMovementComponent->MaxWalkSpeed));
+    
+    CharacterMovementComponent->MaxWalkSpeed = PlayerDataAsset ? PlayerDataAsset->RunSpeed : 800.0f;
 }
 
 void AMP_Controller::StopSprintPlayer(const FInputActionValue& Value)
