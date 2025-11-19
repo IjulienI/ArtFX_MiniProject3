@@ -12,6 +12,8 @@ void AMP_BaseCharacter::BeginPlay()
     Super::BeginPlay();
     if (PlayerDataAsset)
     {
+        CurrentLife = PlayerDataAsset->MaxLife;
+
         CharacterMovement = GetCharacterMovement(); // GetComponentByClass<UCharacterMovementComponent>();
         if (CharacterMovement)
         {

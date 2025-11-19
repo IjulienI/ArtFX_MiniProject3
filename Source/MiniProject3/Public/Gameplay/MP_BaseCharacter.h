@@ -25,4 +25,7 @@ public:
     virtual void Jump() override;
     virtual void Landed(const FHitResult& Hit) override;
 
+protected:
+    UPROPERTY(BlueprintReadOnly, Category = "Player")
+    int CurrentLife = 1;
 };
