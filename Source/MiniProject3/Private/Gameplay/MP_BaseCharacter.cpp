@@ -12,7 +12,7 @@ void AMP_BaseCharacter::BeginPlay()
     Super::BeginPlay();
     if (PlayerDataAsset)
     {
-        CharacterMovement = GetComponentByClass<UCharacterMovementComponent>();
+        CharacterMovement = GetCharacterMovement(); // GetComponentByClass<UCharacterMovementComponent>();
         if (CharacterMovement)
         {
             CharacterMovement->AirControl = PlayerDataAsset->AirControl;
