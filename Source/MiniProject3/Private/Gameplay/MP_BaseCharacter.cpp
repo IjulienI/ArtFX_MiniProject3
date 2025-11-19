@@ -12,6 +12,8 @@ void AMP_BaseCharacter::BeginPlay()
     Super::BeginPlay();
     if (PlayerDataAsset)
     {
+        CurrentLife = PlayerDataAsset->MaxLife;
+
         CharacterMovement = GetCharacterMovement(); // GetComponentByClass<UCharacterMovementComponent>();
         if (CharacterMovement)
         {
@@ -32,15 +34,10 @@ AMP_BaseCharacter::AMP_BaseCharacter()
 
 void AMP_BaseCharacter::Jump()
 {
-    if (JumpCount < NewMaxJumpCount)
-    {
-        Super::Jump();
-        JumpCount++;
-    }
+    Super::Jump();
 }
 
 void AMP_BaseCharacter::Landed(const FHitResult& Hit)
 {
     Super::Landed(Hit);
-    JumpCount = 0;
 }
