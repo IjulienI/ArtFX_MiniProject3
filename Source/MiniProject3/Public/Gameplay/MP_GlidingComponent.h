@@ -25,17 +25,25 @@ public:
     UFUNCTION(BlueprintCallable, Category="Sliding")
     bool GetIsGliding();
 
+    // Setter
+    void SetHasJump(bool bInHasJump);
+
 protected:
     virtual void BeginPlay() override;
     virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+    virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
     void OnGliding();
 
     // Functions
     //------------------------------------------------------------------------------------------
 
+    // Delegates
     UFUNCTION()
     void OnReachJumpApex();
+
+    UFUNCTION()
+    void OnLandedDelegate(const FHitResult& Hit);
 
     // Variables
     //------------------------------------------------------------------------------------------
@@ -53,13 +61,14 @@ protected:
 
     // HIDDEN SETTINGS ------------------------------------------------------------------------
     
-    //References
+    // References
     UPROPERTY(BlueprintReadOnly, Category="Glide")
     TWeakObjectPtr<ACharacter> Character;
 
     UPROPERTY(BlueprintReadOnly, Category="Glide")
     TWeakObjectPtr<UCharacterMovementComponent> CharacterMovementComponent;
 
+    // Owner Variables Cache
     UPROPERTY(BlueprintReadOnly, Category="Glide")
     float PreviousGravityScale = 0.0f;
 
@@ -71,4 +80,5 @@ protected:
 
 private:
     bool bHasJump = false;
+    bool bAskGlide = false;
 };

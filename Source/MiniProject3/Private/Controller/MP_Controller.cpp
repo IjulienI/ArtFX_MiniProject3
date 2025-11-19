@@ -142,7 +142,6 @@ void AMP_Controller::StartJumpPlayer(const FInputActionValue& Value)
     if (!ensure(Character.IsValid())) return;
 
     CharacterMovementComponent->bNotifyApex = true;
-    GlidingController.Glidi
     Character->Jump();
 }
 

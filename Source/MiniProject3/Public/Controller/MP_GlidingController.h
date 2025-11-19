@@ -7,6 +7,7 @@
 #include "MP_GlidingController.generated.h"
 
 
+class UCharacterMovementComponent;
 struct FInputActionValue;
 class UMP_GlidingComponent;
 class UInputAction;
@@ -22,11 +23,17 @@ public:
     void SetupInputComponentGliding(TObjectPtr<UInputComponent> InputComponent, APawn* InPawn);
     
 protected:
-    void StartGliding(const FInputActionValue& Value);
-    void StopGliding(const FInputActionValue& Value);
+    void StartGliding();
+    void StopGliding();
+
+    void StartJump();
 
     TWeakObjectPtr<UMP_GlidingComponent> GlidingComponent;
+    TWeakObjectPtr<UCharacterMovementComponent> CharacterMovementComponent;
     
     UPROPERTY(EditDefaultsOnly, Category = "EnhancedInput")
     TObjectPtr<UInputAction> InputActionGliding;
+
+    UPROPERTY(EditDefaultsOnly, Category = "EnhancedInput")
+    TObjectPtr<UInputAction> InputActionJump;
 };
