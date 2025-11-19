@@ -3,6 +3,8 @@
 
 #include "MiniProject3/Public/Gameplay/MP_BaseCharacter.h"
 
+#include "Gameplay/MP_GlidingComponent.h"
+
 
 AMP_BaseCharacter::AMP_BaseCharacter()
 {
@@ -21,5 +23,12 @@ void AMP_BaseCharacter::Jump()
 void AMP_BaseCharacter::Landed(const FHitResult& Hit)
 {
     Super::Landed(Hit);
+    if (GlidingComponent && GlidingComponent->GetIsGliding())
+        GlidingComponent->StopGliding();
     JumpCount = 0;
+}
+
+void AMP_BaseCharacter::BeginPlay()
+{
+    Super::BeginPlay();
 }

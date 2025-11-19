@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "MP_BaseCharacter.generated.h"
 
+class UMP_GlidingComponent;
+
 UCLASS()
 class MINIPROJECT3_API AMP_BaseCharacter : public ACharacter
 {
@@ -21,6 +23,12 @@ public:
     virtual void Landed(const FHitResult& Hit) override;
 
 protected:
+    virtual void BeginPlay() override;
+
+    // References
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player")
+    TObjectPtr<UMP_GlidingComponent> GlidingComponent;
+    
     int JumpCount = 0;
     UPROPERTY(EditDefaultsOnly)
     int NewMaxJumpCount = 2;
