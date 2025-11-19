@@ -30,9 +30,15 @@ void UMP_DashComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if (!bCanDash) 
+	if (!bCanDash)
 	{
 		ActualiseDashTimeline();
+	}
+
+	if (bDashInAir && Character->GetCharacterMovement()->MovementMode == EMovementMode::MOVE_Walking) 
+	{
+		bDashInAir = false;
+		ResetCooldown();
 	}
 }
 
@@ -46,9 +52,17 @@ void UMP_DashComponent::OnDashInputPressed()
 	// Dash cooldown Get Timer
 	float TimeToDashCooldown = DashDataAsset->DashCooldown;
 
-	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
-	TimerManager.ClearTimer(DashCooldownTimerHangle);
-	TimerManager.SetTimer(DashCooldownTimerHangle, this, &UMP_DashComponent::ResetCooldown, TimeToDashCooldown, false);
+	if(Character->GetCharacterMovement()->MovementMode == EMovementMode::MOVE_Walking)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Start timer"));
+		FTimerManager& TimerManager = GetWorld()->GetTimerManager();
+		TimerManager.ClearTimer(DashCooldownTimerHangle);
+		TimerManager.SetTimer(DashCooldownTimerHangle, this, &UMP_DashComponent::ResetCooldown, TimeToDashCooldown, false);
+	}
+	else 
+	{
+		bDashInAir = true;
+	}
 
 	//Compute raycast
 	RaycastStart = Character->GetActorLocation();
