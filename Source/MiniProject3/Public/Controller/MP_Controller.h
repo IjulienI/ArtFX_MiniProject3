@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "MP_Controller.generated.h"
 
+class UMP_SlidingController;
 class UMP_WallRunController;
 class UMP_DashController;
 class UInputMappingContext;
@@ -26,7 +27,6 @@ public:
     virtual void AddPitchInput(float Val) override;
     virtual void AddYawInput(float Val) override;
 
-
 protected:
     // Overrides
     virtual void SetupInputComponent() override;
@@ -42,7 +42,6 @@ protected:
     void StartJumpPlayer(const FInputActionValue& Value);
     void StopJumpPlayer(const FInputActionValue& Value);
 
-public:
 
 protected:
     // Inputs
@@ -63,6 +62,11 @@ protected:
 
     TWeakObjectPtr<AMP_BaseCharacter> Character;
     TWeakObjectPtr<UCharacterMovementComponent> CharacterMovementComponent;
+    TWeakObjectPtr<UMP_SlidingController> SlidingController;
+    // TWeakObjectPtr<UCC_GravityGunController> GravityGunController;
+    // TWeakObjectPtr<UScoreComponentController> ScoreController;
+    // TWeakObjectPtr<UCC_PickupSpawnerController> PickupSpawner;
+    // TWeakObjectPtr<UCC_PickupCountController> PickupCount;
     TWeakObjectPtr<UMP_WallRunController> WallRunController;
     TWeakObjectPtr<UMP_DashController> DashController;
     // TWeakObjectPtr<UCC_GravityGunController> GravityGunController;

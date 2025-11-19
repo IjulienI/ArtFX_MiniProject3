@@ -9,6 +9,7 @@
 #include "DataAsset/MP_PlayerDataAsset.h"
 #include "DataAsset/MP_WallRunDataAsset.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "MiniProject3/Public/Controller/MP_SlidingController.h"
 #include "Gameplay/MP_WallRunComponent.h"
 #include "MiniProject3/Public/Gameplay/MP_BaseCharacter.h"
 
@@ -45,6 +46,10 @@ void AMP_Controller::SetPawn(APawn* InPawn)
     
     if (!ensure(Character.IsValid())) return;
     CharacterMovementComponent = Character->GetCharacterMovement();
+
+    SlidingController = FindComponentByClass<UMP_SlidingController>();
+    if (SlidingController.IsValid())
+        SlidingController->SetupInputComponentGravityGun(InputComponent, InPawn);
 
     WallRunController = FindComponentByClass<UMP_WallRunController>();
     if (WallRunController.IsValid())
