@@ -49,6 +49,7 @@ protected:
 protected:
 	FTimerHandle DashCooldownTimerHangle;
 	bool bCanDash = true;
+	bool bDashInAir = false;
 	float ActualDashTime = 0.f;
 
 protected:
