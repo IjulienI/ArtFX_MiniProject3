@@ -3,6 +3,8 @@
 
 #include "MiniProject3/Public/Gameplay/MP_BaseCharacter.h"
 
+#include "Gameplay/MP_GlidingComponent.h"
+
 #include "DataAsset/MP_PlayerDataAsset.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
@@ -12,6 +14,8 @@ void AMP_BaseCharacter::BeginPlay()
     Super::BeginPlay();
     if (PlayerDataAsset)
     {
+        CurrentLife = PlayerDataAsset->MaxLife;
+
         CharacterMovement = GetCharacterMovement(); // GetComponentByClass<UCharacterMovementComponent>();
         if (CharacterMovement)
         {
@@ -38,4 +42,7 @@ void AMP_BaseCharacter::Jump()
 void AMP_BaseCharacter::Landed(const FHitResult& Hit)
 {
     Super::Landed(Hit);
+    if (GlidingComponent && GlidingComponent->GetIsGliding())
+        GlidingComponent->StopGliding();
+    JumpCount = 0;
 }
