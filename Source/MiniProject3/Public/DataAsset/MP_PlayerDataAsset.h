@@ -23,4 +23,6 @@ public:
 	float RunSpeed = 800.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "10.0", ClampMax = "10000.0"), Category = "Player|Movements")
 	float WalkSpeed = 600.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "10.0", ClampMax = "10000.0"), Category = "Player")
+	int Health = 8;
 };
