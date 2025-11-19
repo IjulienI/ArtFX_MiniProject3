@@ -37,6 +37,7 @@ protected:
 	ECollisionChannel DashCollisionChannel;
 	FVector RaycastStart;
 	FVector RaycastEnd;
+	FVector LastVelocity;
 	//End of collisions	
 
 	//Data Asset
@@ -49,6 +50,7 @@ protected:
 protected:
 	FTimerHandle DashCooldownTimerHangle;
 	bool bCanDash = true;
+	bool bDashInAir = false;
 	float ActualDashTime = 0.f;
 
 protected:
