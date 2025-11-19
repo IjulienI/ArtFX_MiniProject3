@@ -11,7 +11,7 @@ class MINIPROJECT3_API UMP_PlayerDataAsset : public UDataAsset
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "10.0", ClampMax = "100000.0"), Category = "Player|Movements")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "10.0", ClampMax = "1000.0"), Category = "Player|Movements")
 	float JumpVelocity = 420.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0.0", ClampMax = "100.0"), Category = "Player|Movements")
 	float AirControl = 0.05f;
@@ -19,8 +19,10 @@ public:
 	float GravityScale = 1.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0.0", ClampMax = "1000.0"), Category = "Player|Movements")
 	float AirControlBoost = 2.0f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "10.0", ClampMax = "10000.0"), Category = "Player|Movements")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "10.0", ClampMax = "2000.0"), Category = "Player|Movements")
 	float RunSpeed = 800.0f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "10.0", ClampMax = "10000.0"), Category = "Player|Movements")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "10.0", ClampMax = "2000.0"), Category = "Player|Movements")
 	float WalkSpeed = 600.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0.0", ClampMax = "10.0"), Category = "Player|Movements")
+    float FallingBreakingFriction = 600.0f;
 };
