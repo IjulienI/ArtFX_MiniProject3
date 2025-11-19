@@ -7,6 +7,7 @@
 #include "Gameplay/MP_BaseCharacter.h"
 #include "Components/StaticMeshComponent.h"
 #include "Curves/CurveFloat.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 UMP_DashComponent::UMP_DashComponent()
 {
@@ -67,6 +68,8 @@ void UMP_DashComponent::OnDashInputPressed()
 
 	ActualDashTime = 0;
 	bCanDash = false;
+	Character->GetCharacterMovement()->Velocity = FVector::ZeroVector;
+	Character->GetCharacterMovement()->StopMovementImmediately();
 }
 
 void UMP_DashComponent::ResetCooldown()
@@ -82,20 +85,28 @@ void UMP_DashComponent::ActualiseDashTimeline()
 {
 	ActualDashTime += GetWorld()->GetDeltaSeconds();
 
-	if (DashDataAsset->bUseSpeedCurve && DashDataAsset->DashSpeedCurve != nullptr && ActualDashTime * DashDataAsset->DashPlayRate < 1)
+	if (DashDataAsset->bUseSpeedCurve && DashDataAsset->DashSpeedCurve != nullptr && ActualDashTime * DashDataAsset->DashPlayRate < 0.9)
 	{		
 		// Dash whith speed curve
 		float alfa = DashDataAsset->DashSpeedCurve->GetFloatValue(ActualDashTime * DashDataAsset->DashPlayRate / 1);
 		Character->SetActorLocation(FVector{ FMath::Lerp(RaycastStart.X, RaycastEnd.X, alfa)
 											,FMath::Lerp(RaycastStart.Y, RaycastEnd.Y, alfa)
 											,FMath::Lerp(RaycastStart.Z, RaycastEnd.Z, alfa) });
+
+		Character->FindComponentByClass<UStaticMeshComponent>();
+		const FVector Impusle = Character->GetActorForwardVector() * DashDataAsset->DashDistance * 10;
+		Character->GetCharacterMovement()->AddImpulse(Impusle);
 	}
-	else if (ActualDashTime / (DashDataAsset->DashDistance / DashDataAsset->DashLinearSpeed) < 1)
+	else if (ActualDashTime / (DashDataAsset->DashDistance / DashDataAsset->DashLinearSpeed) < 0.9)
 	{
 		// Dash whith linear speed 
 		float alfa = ActualDashTime / (DashDataAsset->DashDistance / DashDataAsset->DashLinearSpeed);
 		Character->SetActorLocation(FVector{ FMath::Lerp(RaycastStart.X, RaycastEnd.X, alfa)
 											,FMath::Lerp(RaycastStart.Y, RaycastEnd.Y, alfa)
 											,FMath::Lerp(RaycastStart.Z, RaycastEnd.Z, alfa) });
+
+		Character->FindComponentByClass<UStaticMeshComponent>();
+		const FVector Impusle = Character->GetActorForwardVector() * DashDataAsset->DashLinearSpeed;
+		Character->GetCharacterMovement()->AddImpulse(Impusle);
 	}
 }
