@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 
 #include "MiniProject3/Public/Controller/MP_Controller.h"
 #include "EnhancedInputSubsystems.h"
@@ -110,7 +108,7 @@ void AMP_Controller::TurnPlayer(const FInputActionValue& Value)
 void AMP_Controller::StartSprintPlayer(const FInputActionValue& Value)
 {
     // Todo : Bind data asset for speed
-    if (!ensure(CharacterMovementComponent.IsValid())) return;
+    if (!ensure(CharacterMovementComponent.IsValid()) || CharacterMovementComponent->IsFalling()) return;
 
     float RunMaxSpeed = PlayerDataAsset ? PlayerDataAsset->RunSpeed : 800.0f;
     if (WallRunDataAsset)
@@ -122,7 +120,7 @@ void AMP_Controller::StartSprintPlayer(const FInputActionValue& Value)
     GEngine->AddOnScreenDebugMessage(0, 0.5f, FColor::Red,  FString::Printf(TEXT("Sprinting speed : %f"), CharacterMovementComponent->MaxWalkSpeed));
 }
 
-void AMP_Controller::StopSprintPlayer(const FInputActionValue& Value)
+void AMP_Controller::StopSprintPlayer()
 {
     // Todo : Bind data asset for speed
     if (!ensure(CharacterMovementComponent.IsValid())) return;
