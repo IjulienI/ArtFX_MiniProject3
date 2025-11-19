@@ -66,7 +66,8 @@ void UMP_DashComponent::OnDashInputPressed()
 
 	//Compute raycast
 	RaycastStart = Character->GetActorLocation();
-	RaycastEnd = RaycastStart + (Character->GetActorForwardVector() * DashDataAsset->DashDistance);
+	FVector NormalizeVelocity = Character->GetCharacterMovement()->Velocity.GetSafeNormal();
+	RaycastEnd = RaycastStart + (NormalizeVelocity * FVector(1, 1, 0) * DashDataAsset->DashDistance);
 
 	FCollisionQueryParams Params;
 	Params.AddIgnoredActor(Character.Get());
@@ -82,6 +83,7 @@ void UMP_DashComponent::OnDashInputPressed()
 
 	ActualDashTime = 0;
 	bCanDash = false;
+	LastVelocity = Character->GetCharacterMovement()->Velocity;
 	Character->GetCharacterMovement()->Velocity = FVector::ZeroVector;
 	Character->GetCharacterMovement()->StopMovementImmediately();
 }
@@ -107,9 +109,11 @@ void UMP_DashComponent::ActualiseDashTimeline()
 											,FMath::Lerp(RaycastStart.Y, RaycastEnd.Y, alfa)
 											,FMath::Lerp(RaycastStart.Z, RaycastEnd.Z, alfa) });
 
-		Character->FindComponentByClass<UStaticMeshComponent>();
-		const FVector Impusle = Character->GetActorForwardVector() * DashDataAsset->DashDistance * 10;
-		Character->GetCharacterMovement()->AddImpulse(Impusle);
+		
+		//const FVector Impusle = Character->GetActorForwardVector() * DashDataAsset->DashDistance * 10;
+		/*const FVector Impusle = LastVelocity * DashDataAsset->FallDistanceFactorAfterDash * FVector(1, 1, 0);
+		Character->GetCharacterMovement()->AddImpulse(Impusle);*/
+		Character->GetCharacterMovement()->Velocity = LastVelocity * DashDataAsset->FallDistanceFactorAfterDash * FVector(1, 1, 0);
 	}
 	else if (ActualDashTime / (DashDataAsset->DashDistance / DashDataAsset->DashLinearSpeed) < 0.9)
 	{
@@ -119,8 +123,8 @@ void UMP_DashComponent::ActualiseDashTimeline()
 											,FMath::Lerp(RaycastStart.Y, RaycastEnd.Y, alfa)
 											,FMath::Lerp(RaycastStart.Z, RaycastEnd.Z, alfa) });
 
-		Character->FindComponentByClass<UStaticMeshComponent>();
-		const FVector Impusle = Character->GetActorForwardVector() * DashDataAsset->DashLinearSpeed;
+		const FVector Impusle = LastVelocity * DashDataAsset->FallDistanceFactorAfterDash * FVector(1,1,0);
+		//const FVector Impusle = Character->GetActorForwardVector() * DashDataAsset->DashLinearSpeed;
 		Character->GetCharacterMovement()->AddImpulse(Impusle);
 	}
 }

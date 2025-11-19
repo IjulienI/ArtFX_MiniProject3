@@ -37,6 +37,7 @@ protected:
 	ECollisionChannel DashCollisionChannel;
 	FVector RaycastStart;
 	FVector RaycastEnd;
+	FVector LastVelocity;
 	//End of collisions	
 
 	//Data Asset
