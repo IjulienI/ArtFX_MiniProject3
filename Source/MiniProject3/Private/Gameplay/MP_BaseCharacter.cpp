@@ -12,6 +12,8 @@ void AMP_BaseCharacter::BeginPlay()
     Super::BeginPlay();
     if (PlayerDataAsset)
     {
+        CurrentLife = PlayerDataAsset->MaxLife;
+
         CharacterMovement = GetCharacterMovement(); // GetComponentByClass<UCharacterMovementComponent>();
         if (CharacterMovement)
         {
@@ -28,8 +30,6 @@ void AMP_BaseCharacter::BeginPlay()
 AMP_BaseCharacter::AMP_BaseCharacter()
 {
     PrimaryActorTick.bCanEverTick = true;
-    
-    CurrentLife = PlayerDataAsset ? PlayerDataAsset->MaxLife : 1;
 }
 
 void AMP_BaseCharacter::Jump()
