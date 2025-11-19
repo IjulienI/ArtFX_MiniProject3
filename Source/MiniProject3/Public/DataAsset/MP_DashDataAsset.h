@@ -24,4 +24,6 @@ public:
 	float DashPlayRate = 1.f;
 	UPROPERTY(EditAnywhere, Category = "Speed", meta = (EditCondition = "!bUseSpeedCurve", EditConditionHides, Units = "CentimetersPerSecond"))
 	float DashLinearSpeed = 3000.f;
+	UPROPERTY(EditAnywhere, Category = "Speed")
+	float FallDistanceFactorAfterDash = 1;
 };
