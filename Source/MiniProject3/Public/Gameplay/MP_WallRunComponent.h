@@ -8,6 +8,7 @@
 
 
 class UMP_WallRunDataAsset;
+class UMP_PlayerDataAsset;
 
 UCLASS( Abstract, Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class MINIPROJECT3_API UMP_WallRunComponent : public UActorComponent
@@ -33,6 +34,8 @@ public:
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Wall Run|Data Asset")
 	TObjectPtr<UMP_WallRunDataAsset> WallRunDataAsset{nullptr};
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Wall Run|Data Asset")
+	TObjectPtr<UMP_PlayerDataAsset> PlayerDataAsset{nullptr};
 
 	// wall run
 public:

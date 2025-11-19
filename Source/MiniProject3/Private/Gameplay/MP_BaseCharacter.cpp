@@ -3,6 +3,29 @@
 
 #include "MiniProject3/Public/Gameplay/MP_BaseCharacter.h"
 
+#include "DataAsset/MP_PlayerDataAsset.h"
+#include "GameFramework/CharacterMovementComponent.h"
+
+
+void AMP_BaseCharacter::BeginPlay()
+{
+    Super::BeginPlay();
+    if (PlayerDataAsset)
+    {
+        CurrentLife = PlayerDataAsset->MaxLife;
+
+        CharacterMovement = GetCharacterMovement(); // GetComponentByClass<UCharacterMovementComponent>();
+        if (CharacterMovement)
+        {
+            CharacterMovement->AirControl = PlayerDataAsset->AirControl;
+            CharacterMovement->AirControlBoostMultiplier = PlayerDataAsset->AirControlBoost;
+            CharacterMovement->GravityScale = PlayerDataAsset->GravityScale;
+            CharacterMovement->JumpZVelocity = PlayerDataAsset->JumpVelocity;
+            CharacterMovement->MaxWalkSpeed = PlayerDataAsset->WalkSpeed;
+            CharacterMovement->BrakingDecelerationFalling = PlayerDataAsset->FallingBreakingFriction;
+        }
+    }
+}
 
 AMP_BaseCharacter::AMP_BaseCharacter()
 {
@@ -11,15 +34,10 @@ AMP_BaseCharacter::AMP_BaseCharacter()
 
 void AMP_BaseCharacter::Jump()
 {
-    if (JumpCount < NewMaxJumpCount)
-    {
-        Super::Jump();
-        JumpCount++;
-    }
+    Super::Jump();
 }
 
 void AMP_BaseCharacter::Landed(const FHitResult& Hit)
 {
     Super::Landed(Hit);
-    JumpCount = 0;
 }
