@@ -13,4 +13,15 @@ class MINIPROJECT3_API AMP_BaseCharacter : public ACharacter
 
 public:
     AMP_BaseCharacter();
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player|Data Asset")
+    TObjectPtr<class UMP_PlayerDataAsset> PlayerDataAsset{nullptr};
+
+    virtual void Jump() override;
+    virtual void Landed(const FHitResult& Hit) override;
+
+protected:
+    int JumpCount = 0;
+    UPROPERTY(EditDefaultsOnly)
+    int NewMaxJumpCount = 2;
 };
