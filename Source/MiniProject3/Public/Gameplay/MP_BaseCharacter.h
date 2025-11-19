@@ -21,9 +21,5 @@ public:
     virtual void Landed(const FHitResult& Hit) override;
 
 protected:
-    int JumpCount = 0;
-    UPROPERTY(EditDefaultsOnly)
-    int NewMaxJumpCount = 2;
-
     int CurrentLife = 1;
 };
