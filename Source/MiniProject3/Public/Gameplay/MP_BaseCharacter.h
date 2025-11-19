@@ -13,9 +13,6 @@ class MINIPROJECT3_API AMP_BaseCharacter : public ACharacter
 {
     GENERATED_BODY()
     
-protected:
-    virtual void BeginPlay() override;
-    
 public:
     AMP_BaseCharacter();
 

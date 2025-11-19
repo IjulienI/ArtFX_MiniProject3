@@ -46,8 +46,3 @@ void AMP_BaseCharacter::Landed(const FHitResult& Hit)
         GlidingComponent->StopGliding();
     JumpCount = 0;
 }
-
-void AMP_BaseCharacter::BeginPlay()
-{
-    Super::BeginPlay();
-}
