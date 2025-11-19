@@ -19,7 +19,7 @@ class MINIPROJECT3_API UMP_SlidingController : public UActorComponent
 public:
     UMP_SlidingController();
 
-    void SetupInputComponentGravityGun(TObjectPtr<UInputComponent> InputComponent, APawn* InPawn);
+    void SetupInputComponentSliding(TObjectPtr<UInputComponent> InputComponent, APawn* InPawn);
 
 protected:
     void StartSliding(const FInputActionValue& Value);
