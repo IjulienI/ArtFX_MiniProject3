@@ -10,7 +10,7 @@ AMP_BaseCharacter::AMP_BaseCharacter()
 {
     PrimaryActorTick.bCanEverTick = true;
     
-    CurrentLife = PlayerDataAsset ? PlayerDataAsset->Health : 1;
+    CurrentLife = PlayerDataAsset ? PlayerDataAsset->MaxLife : 1;
 }
 
 void AMP_BaseCharacter::Jump()
