@@ -1,27 +1,41 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
-#include "MP_DashDataAsset.generated.h"
+#include "MP_BossDataAsset.generated.h"
 
-UCLASS()
-class MINIPROJECT3_API UMP_DashDataAsset : public UDataAsset
+UCLASS(Blueprintable, BlueprintType)
+class MINIPROJECT3_API UMP_BossDataAsset : public UDataAsset
 {
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, meta = (ClampMin = "10.0", ClampMax = "1000.0", Units = "Centimeters"))
-	float DashDistance = 300.f;
-	UPROPERTY(EditAnywhere, meta = (ClampMin = "0.1", ClampMax = "60.0", Units = "Seconds"))
-	float DashCooldown = 2.f;
-	UPROPERTY(EditAnywhere, Category = "Speed")
-	bool bUseSpeedCurve = false;
-	UPROPERTY(EditAnywhere, Category = "Speed", meta = (EditCondition = "bUseSpeedCurve", EditConditionHides))
-	TObjectPtr<class UCurveFloat> DashSpeedCurve = nullptr;
-	UPROPERTY(EditAnywhere, Category = "Speed", meta = (EditCondition = "bUseSpeedCurve", EditConditionHides))
-	float DashPlayRate = 1.f;
-	UPROPERTY(EditAnywhere, Category = "Speed", meta = (EditCondition = "!bUseSpeedCurve", EditConditionHides, Units = "CentimetersPerSecond"))
-	float DashLinearSpeed = 3000.f;
+	UPROPERTY(EditAnywhere, Category = "Direct Projectile")
+	bool bUseDirectProjectile = false;
+	UPROPERTY(EditAnywhere, Category = "Direct Projectile", meta = (EditCondition = "bUseDirectProjectile", EditConditionHides), meta = (ClampMin = "0.01"))
+	float AttackRandomOffset = 0.f;
+	UPROPERTY(EditAnywhere, Category = "Direct Projectile",  meta = (EditCondition = "bUseDirectProjectile", EditConditionHides))
+	bool bShootRandomDelayOffset = false;
+	UPROPERTY(EditAnywhere, Category = "Direct Projectile", meta = (EditCondition = "bUseDirectProjectile && bShootRandomDelayOffset", EditConditionHides, Units = "Seconds", ClampMin = "0.0"))
+	float RandomDelayOffset = 1.f;
+	UPROPERTY(EditAnywhere, Category = "Direct Projectile", meta = (EditCondition = "bUseDirectProjectile", EditConditionHides, Units = "Seconds", ClampMin = "0.0"))
+	float DelayBetweenProjectile = 1.f;
+	UPROPERTY(EditAnywhere, Category = "Direct Projectile|Fireflies", meta = (EditCondition = "bUseDirectProjectile", EditConditionHides))
+	bool bEnableFireflies = false;
+	UPROPERTY(EditAnywhere, Category = "Direct Projectile|Fireflies")
+	bool bRandomFireflyAmount = false;
+	UPROPERTY(EditAnywhere, Category = "Direct Projectile|Fireflies", meta = (EditCondition = "bEnableFireflies && bUseDirectProjectile && bRandomFireflyAmount", EditConditionHides))
+	uint32 FirefliesAmountMin = 1;
+	UPROPERTY(EditAnywhere, Category = "Direct Projectile|Fireflies", meta = (EditCondition = "bEnableFireflies && bUseDirectProjectile && bRandomFireflyAmount", EditConditionHides))
+	uint32 FirefliesAmountMax = 10;
+	UPROPERTY(EditAnywhere, Category = "Direct Projectile|Fireflies", meta = (EditCondition = "bEnableFireflies && bUseDirectProjectile && !bRandomFireflyAmount", EditConditionHides))
+	uint32 FirefliesAmount = 1;
+	UPROPERTY(EditAnywhere, Category = "Direct Projectile|Fireflies", meta = (EditCondition = "bEnableFireflies && bUseDirectProjectile", EditConditionHides, ClampMin = "0.0"))
+	float FirefliesSpeed = 0.f;
+	UPROPERTY(EditAnywhere, Category = "Direct Projectile|Fireflies", meta = (EditCondition = "bEnableFireflies && bUseDirectProjectile", EditConditionHides, ClampMin = "0.0"))
+	float AttackDamage = 0.f;
+	UPROPERTY(EditAnywhere, Category = "Direct Projectile|Fireflies", meta = (EditCondition = "bEnableFireflies && bUseDirectProjectile", EditConditionHides, ClampMin = "0.0"))
+	float AttackDuration = 5.f;
+	UPROPERTY(EditAnywhere, Category = "Direct Projectile|Fireflies", meta = (EditCondition = "bEnableFireflies && bUseDirectProjectile", EditConditionHides, Units = "Seconds"))
+	FLinearColor FireflyColor = FLinearColor::Yellow;
 };
