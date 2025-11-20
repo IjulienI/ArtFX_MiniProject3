@@ -21,7 +21,7 @@ void UMP_GlidingController::SetupInputComponentGliding(TObjectPtr<UInputComponen
     CharacterMovementComponent = InPawn->FindComponentByClass<UCharacterMovementComponent>();
 
     // The player need to have an AC_GlidingComponent
-    if (!ensure(GlidingComponent.IsValid())) return;
+    if (!GlidingComponent.IsValid()) return;
 
     
     if (!InputComponent) return;
