@@ -2,6 +2,8 @@
 
 
 #include "Gameplay/MP_WallRunComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "Gameplay/MP_BaseCharacter.h"
 
 UMP_WallRunComponent::UMP_WallRunComponent()
 {
@@ -17,6 +19,22 @@ void UMP_WallRunComponent::BeginPlay()
 void UMP_WallRunComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+}
+
+void UMP_WallRunComponent::StartJumpHeight()
+{
+	StartJumpFromGroundHeight = GetOwner()->GetActorLocation().Z;
+}
+
+void UMP_WallRunComponent::ResetJumpCount()
+{
+	auto Owner = GetOwner();
+	if (!Owner) return;
+	auto Character = Cast<AMP_BaseCharacter>(Owner);
+	if (!Character) return;
+	Character->ResetJumpState();
+	Character->JumpCurrentCount = 0;
+	Character->JumpCurrentCountPreJump = 0;
 }
 
 

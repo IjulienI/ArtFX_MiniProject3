@@ -6,6 +6,7 @@
 #include "EnhancedInputComponent.h"
 #include "Controller/MP_WallRunController.h"
 #include "Controller/MP_DashController.h"
+#include "Controller/MP_GlidingController.h"
 #include "DataAsset/MP_PlayerDataAsset.h"
 #include "DataAsset/MP_WallRunDataAsset.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -49,7 +50,7 @@ void AMP_Controller::SetPawn(APawn* InPawn)
 
     SlidingController = FindComponentByClass<UMP_SlidingController>();
     if (SlidingController.IsValid())
-        SlidingController->SetupInputComponentGravityGun(InputComponent, InPawn);
+        SlidingController->SetupInputComponentSliding(InputComponent, InPawn);
 
     WallRunController = FindComponentByClass<UMP_WallRunController>();
     if (WallRunController.IsValid())
@@ -61,6 +62,12 @@ void AMP_Controller::SetPawn(APawn* InPawn)
     if (DashController.IsValid())
     {
         DashController->SetupInputComponentDash(InputComponent, InPawn);
+    }
+
+    GlidingController = FindComponentByClass<UMP_GlidingController>();
+    if (GlidingController.IsValid())
+    {
+        GlidingController->SetupInputComponentGliding(InputComponent, InPawn);
     }
     // Exemple : 
     // GravityGunController = FindComponentByClass<UCC_GravityGunController>();
@@ -115,7 +122,7 @@ void AMP_Controller::StartSprintPlayer(const FInputActionValue& Value)
     CharacterMovementComponent->MaxWalkSpeed = PlayerDataAsset ? PlayerDataAsset->RunSpeed : 800.0f;
 }
 
-void AMP_Controller::StopSprintPlayer(const FInputActionValue& Value)
+void AMP_Controller::StopSprintPlayer()
 {
     // Todo : Bind data asset for speed
     if (!ensure(CharacterMovementComponent.IsValid())) return;
@@ -127,13 +134,14 @@ void AMP_Controller::StartJumpPlayer(const FInputActionValue& Value)
 {
     if (!ensure(Character.IsValid())) return;
 
+    CharacterMovementComponent->bNotifyApex = true;
     Character->Jump();
 }
 
 void AMP_Controller::StopJumpPlayer(const FInputActionValue& Value)
 {
     if (!ensure(Character.IsValid())) return;
-
+    
     Character->StopJumping();
 }
 

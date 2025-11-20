@@ -54,7 +54,7 @@ void UMP_DashComponent::OnDashInputPressed()
 
 	if(Character->GetCharacterMovement()->MovementMode == EMovementMode::MOVE_Walking)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Start timer"));
+		/*UE_LOG(LogTemp, Warning, TEXT("Start timer"));*/
 		FTimerManager& TimerManager = GetWorld()->GetTimerManager();
 		TimerManager.ClearTimer(DashCooldownTimerHangle);
 		TimerManager.SetTimer(DashCooldownTimerHangle, this, &UMP_DashComponent::ResetCooldown, TimeToDashCooldown, false);
@@ -66,7 +66,13 @@ void UMP_DashComponent::OnDashInputPressed()
 
 	//Compute raycast
 	RaycastStart = Character->GetActorLocation();
+	Character->GetCharacterMovement()->Velocity = Character->GetCharacterMovement()->Velocity * FVector(1, 1, 0);
 	FVector NormalizeVelocity = Character->GetCharacterMovement()->Velocity.GetSafeNormal();
+	if (NormalizeVelocity.Length() == 0) 
+	{
+		NormalizeVelocity = Character->GetActorForwardVector();
+		Character->GetCharacterMovement()->Velocity = Character->GetActorForwardVector() * Character->GetCharacterMovement()->GetMaxSpeed();
+	}
 	RaycastEnd = RaycastStart + (NormalizeVelocity * FVector(1, 1, 0) * DashDataAsset->DashDistance);
 
 	FCollisionQueryParams Params;
@@ -86,6 +92,14 @@ void UMP_DashComponent::OnDashInputPressed()
 	LastVelocity = Character->GetCharacterMovement()->Velocity;
 	Character->GetCharacterMovement()->Velocity = FVector::ZeroVector;
 	Character->GetCharacterMovement()->StopMovementImmediately();
+}
+
+void UMP_DashComponent::StopDash()
+{
+	ActualDashTime = 0;
+	bDashInAir = false;
+	ResetCooldown();
+	Character->GetCharacterMovement()->Velocity = FVector::ZeroVector;
 }
 
 void UMP_DashComponent::ResetCooldown()
@@ -109,10 +123,6 @@ void UMP_DashComponent::ActualiseDashTimeline()
 											,FMath::Lerp(RaycastStart.Y, RaycastEnd.Y, alfa)
 											,FMath::Lerp(RaycastStart.Z, RaycastEnd.Z, alfa) });
 
-		
-		//const FVector Impusle = Character->GetActorForwardVector() * DashDataAsset->DashDistance * 10;
-		/*const FVector Impusle = LastVelocity * DashDataAsset->FallDistanceFactorAfterDash * FVector(1, 1, 0);
-		Character->GetCharacterMovement()->AddImpulse(Impusle);*/
 		Character->GetCharacterMovement()->Velocity = LastVelocity * DashDataAsset->FallDistanceFactorAfterDash * FVector(1, 1, 0);
 	}
 	else if (ActualDashTime / (DashDataAsset->DashDistance / DashDataAsset->DashLinearSpeed) < 0.9)
@@ -123,8 +133,6 @@ void UMP_DashComponent::ActualiseDashTimeline()
 											,FMath::Lerp(RaycastStart.Y, RaycastEnd.Y, alfa)
 											,FMath::Lerp(RaycastStart.Z, RaycastEnd.Z, alfa) });
 
-		const FVector Impusle = LastVelocity * DashDataAsset->FallDistanceFactorAfterDash * FVector(1,1,0);
-		//const FVector Impusle = Character->GetActorForwardVector() * DashDataAsset->DashLinearSpeed;
-		Character->GetCharacterMovement()->AddImpulse(Impusle);
+		Character->GetCharacterMovement()->Velocity = LastVelocity * DashDataAsset->FallDistanceFactorAfterDash * FVector(1, 1, 0);
 	}
 }
