@@ -23,7 +23,7 @@ public:
     void StopGliding();
 
     // Getter
-    UFUNCTION(BlueprintCallable, Category="Sliding")
+    UFUNCTION(BlueprintCallable, BlueprintPure, Category="Sliding")
     bool GetIsGliding();
 
     // Setter
@@ -71,6 +71,9 @@ protected:
 
     UPROPERTY(BlueprintReadOnly, Category="Glide")
     TWeakObjectPtr<UCharacterMovementComponent> CharacterMovementComponent;
+
+    UPROPERTY(BlueprintReadOnly, Category="Glide")
+    TWeakObjectPtr<USceneComponent> NiagaraSceneComponent;
 
     // System Variables
     UPROPERTY(BlueprintReadOnly, Category="Glide")
