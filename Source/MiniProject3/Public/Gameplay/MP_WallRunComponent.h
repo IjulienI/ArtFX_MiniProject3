@@ -30,6 +30,9 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void JumpOfWall();
 
+	UFUNCTION(BlueprintCallable)
+	void ResetJumpCount();
+
 	// data Asset
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Wall Run|Data Asset")
