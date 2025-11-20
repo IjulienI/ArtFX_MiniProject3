@@ -122,7 +122,7 @@ void AMP_Controller::StartSprintPlayer(const FInputActionValue& Value)
     CharacterMovementComponent->MaxWalkSpeed = PlayerDataAsset ? PlayerDataAsset->RunSpeed : 800.0f;
 }
 
-void AMP_Controller::StopSprintPlayer(const FInputActionValue& Value)
+void AMP_Controller::StopSprintPlayer()
 {
     // Todo : Bind data asset for speed
     if (!ensure(CharacterMovementComponent.IsValid())) return;
