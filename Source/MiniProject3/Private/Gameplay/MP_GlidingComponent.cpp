@@ -35,6 +35,10 @@ void UMP_GlidingComponent::BeginPlay()
     // Bind to jump apex
     Character->OnReachedJumpApex.AddUniqueDynamic(this, &UMP_GlidingComponent::OnReachJumpApex);
     Character->LandedDelegate.AddUniqueDynamic(this, &UMP_GlidingComponent::OnLandedDelegate);
+
+    // Setup Duration
+    if (IsValid(GlidingDataAsset))
+        CurrentDuration = GlidingDataAsset->Duration;
 }
 
 void UMP_GlidingComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -54,7 +58,7 @@ void UMP_GlidingComponent::TickComponent(float DeltaTime, enum ELevelTick TickTy
     if (!bIsGliding) return;
     if (!IsValid(GlidingDataAsset) && !CharacterMovementComponent.IsValid()) return;
 
-    if (IsValid(GlidingDataAsset) && IsValid(GlidingDataAsset->ForceFeedbackGlideLoop))
+    if (IsValid(GlidingDataAsset->ForceFeedbackGlideLoop))
         GetWorld()->GetFirstPlayerController()->ClientPlayForceFeedback(GlidingDataAsset->ForceFeedbackGlideLoop);
 
     // Get Velocity and direction infos
@@ -82,6 +86,16 @@ void UMP_GlidingComponent::TickComponent(float DeltaTime, enum ELevelTick TickTy
     CharacterMovementComponent->Velocity.Y = NewVelocity.Y;
 
     if (DetectWallRunCollision()) StopGliding();
+
+    // Decrease Duration
+    const float NewDuration = CurrentDuration - 1.0f *  DeltaTime;
+    CurrentDuration = FMath::Clamp(NewDuration, 0, GlidingDataAsset->Duration);
+
+    // If Duration == 0, stop gliding
+    if (CurrentDuration <= 0)
+    {
+        StopGliding();
+    }
 }
 
 void UMP_GlidingComponent::OnReachJumpApex()
@@ -95,11 +109,17 @@ void UMP_GlidingComponent::OnReachJumpApex()
 void UMP_GlidingComponent::OnLandedDelegate(const FHitResult& Hit)
 {
     bHasJump = false;
+    
+    // Reset Duration
+    if (IsValid(GlidingDataAsset))
+        CurrentDuration = GlidingDataAsset->Duration;
+    
     if (bIsGliding) StopGliding();
 }
 
 void UMP_GlidingComponent::StartGliding()
 {
+    if (CurrentDuration <= 0.0f) return;
     if (CharacterMovementComponent.IsValid() && !CharacterMovementComponent->IsFalling()) return;
     if (bIsGliding) return;
 
@@ -152,7 +172,7 @@ void UMP_GlidingComponent::StopGliding()
 {
     bAskGlide = false;
     if (!bIsGliding) return;
-    
+
     // Check if the CharacterMovementComponent and the GlidindDataAsset is valid.
     if (!CharacterMovementComponent.IsValid() && !IsValid(GlidingDataAsset)) return;
 
@@ -175,6 +195,14 @@ void UMP_GlidingComponent::StopGliding()
 bool UMP_GlidingComponent::GetIsGliding()
 {
     return bIsGliding;
+}
+
+float UMP_GlidingComponent::GetDuration()
+{
+    if (IsValid(GlidingDataAsset))
+        return CurrentDuration / GlidingDataAsset->Duration;
+
+    return -1.0f;
 }
 
 void UMP_GlidingComponent::SetHasJump(bool bInHasJump)

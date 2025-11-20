@@ -16,13 +16,16 @@ class MINIPROJECT3_API UMP_GlideDataAsset : public UDataAsset
     GENERATED_BODY()
 
 public:
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Glide", meta = ( Units = "Seconds" ))
+    float Duration = 10.0f;
+    
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Glide")
     float GravityScale = 0.4f;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Glide")
     float Speed = 200.0f;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Glide")
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Glide", meta = ( ClampMin = 1.0f, ClampMax = 50.0f ))
     float Deceleration = 4.0f;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Glide")
@@ -31,7 +34,7 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Glide")
     float VelocityZ = 10.0f;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Glide")
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Glide", meta = ( ClampMin = 1.0f, ClampMax = 50.0f ))
     float DecelerationZ = 4.0f;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Glide")
