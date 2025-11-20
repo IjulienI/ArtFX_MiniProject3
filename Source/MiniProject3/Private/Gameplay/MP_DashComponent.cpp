@@ -123,7 +123,7 @@ void UMP_DashComponent::ActualiseDashTimeline()
 		float alfa = DashDataAsset->DashSpeedCurve->GetFloatValue(ActualDashTime * DashDataAsset->DashPlayRate / 1);
 		Character->SetActorLocation(FVector{ FMath::Lerp(RaycastStart.X, RaycastEnd.X, alfa)
 											,FMath::Lerp(RaycastStart.Y, RaycastEnd.Y, alfa)
-											,FMath::Lerp(RaycastStart.Z, RaycastEnd.Z, alfa) });
+											,FMath::Lerp(RaycastStart.Z, RaycastEnd.Z, alfa) }, true);
 
 		Character->GetCharacterMovement()->Velocity = LastVelocity * DashDataAsset->FallDistanceFactorAfterDash * FVector(1, 1, 0);
 	}
@@ -133,7 +133,7 @@ void UMP_DashComponent::ActualiseDashTimeline()
 		float alfa = ActualDashTime / (DashDataAsset->DashDistance / DashDataAsset->DashLinearSpeed);
 		Character->SetActorLocation(FVector{ FMath::Lerp(RaycastStart.X, RaycastEnd.X, alfa)
 											,FMath::Lerp(RaycastStart.Y, RaycastEnd.Y, alfa)
-											,FMath::Lerp(RaycastStart.Z, RaycastEnd.Z, alfa) });
+											,FMath::Lerp(RaycastStart.Z, RaycastEnd.Z, alfa) }, true);
 
 		Character->GetCharacterMovement()->Velocity = LastVelocity * DashDataAsset->FallDistanceFactorAfterDash * FVector(1, 1, 0);
 	}
