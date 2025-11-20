@@ -18,8 +18,17 @@ public:
 	bool bShootRandomDelayOffset = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Direct Projectile", meta = (EditCondition = "bUseDirectProjectile && bShootRandomDelayOffset", EditConditionHides, Units = "Seconds", ClampMin = "0.0"))
 	float RandomDelayOffset = 1.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Direct Projectile", meta = (EditCondition = "bUseDirectProjectile && bShootRandomDelayOffset", EditConditionHides, Units = "Seconds", ClampMin = "0.0"))
+	int AttackDamage = 1;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Direct Projectile", meta = (EditCondition = "bUseDirectProjectile", EditConditionHides, Units = "Seconds", ClampMin = "0.0"))
 	float DelayBetweenProjectile = 1.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Direct Projectile", meta = (EditCondition = "bUseDirectProjectile", EditConditionHides, Units = "Seconds", ClampMin = "0.0"))
+	float AimingDelay = 1.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Direct Projectile", meta = (EditCondition = "bUseDirectProjectile", EditConditionHides, Units = "Seconds", ClampMin = "0.0"))
+	float AimingSpeed = 10.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Direct Projectile", meta = (EditCondition = "bUseDirectProjectile", EditConditionHides, Units = "Seconds", ClampMin = "0.0"))
+	float ProjectileFXDuration = 1.f;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Direct Projectile|Fireflies", meta = (EditCondition = "bUseDirectProjectile", EditConditionHides))
 	bool bEnableFireflies = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Direct Projectile|Fireflies")
@@ -33,7 +42,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Direct Projectile|Fireflies", meta = (EditCondition = "bEnableFireflies && bUseDirectProjectile", EditConditionHides, ClampMin = "0.0"))
 	float FirefliesSpeed = 0.f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Direct Projectile|Fireflies", meta = (EditCondition = "bEnableFireflies && bUseDirectProjectile", EditConditionHides, ClampMin = "0.0"))
-	float AttackDamage = 0.f;
+	float FireflyAttackDamage = 0.f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Direct Projectile|Fireflies", meta = (EditCondition = "bEnableFireflies && bUseDirectProjectile", EditConditionHides, ClampMin = "0.0"))
 	float AttackDuration = 5.f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Direct Projectile|Fireflies", meta = (EditCondition = "bEnableFireflies && bUseDirectProjectile", EditConditionHides, Units = "Seconds"))
