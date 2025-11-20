@@ -28,6 +28,10 @@
 		{
 			"Name": "FMODStudio",
 			"Enabled": false
+		},
+		{
+			"Name": "Bridge",
+			"Enabled": false
 		}
 	]
 }
