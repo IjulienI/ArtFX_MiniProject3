@@ -24,12 +24,13 @@ protected:
 
 public:	
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
+	
 	// jump of wall
 public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void JumpOfWall();
-
+	void StartJumpHeight();
+	
 	UFUNCTION(BlueprintCallable)
 	void ResetJumpCount();
 
@@ -44,6 +45,8 @@ protected:
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Wall Run")
 	float CharacterPitchCurrentTilt = 0.0f;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Wall Run")
+	float StartJumpFromGroundHeight = 0.0f;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Wall Run")
 	bool bHasHitWall = false;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Wall Run")
