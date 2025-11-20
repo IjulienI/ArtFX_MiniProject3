@@ -30,6 +30,10 @@ public:
 	void OnDashInputPressed();
 	UFUNCTION(BlueprintCallable, Category = "Dash")
 	void StopDash();
+
+public:
+	UPROPERTY(BlueprintReadOnly, Category = "Dash")
+	bool bInDash = false;
 	//End of inputs
 	
 	//Collisions
@@ -56,6 +60,7 @@ protected:
 	float ActualDashTime = 0.f;
 
 protected:
+	UFUNCTION(BlueprintCallable, Category = "Dash")
 	void ResetCooldown();
 	void ActualiseDashTimeline();
 	//End of Cooldown
