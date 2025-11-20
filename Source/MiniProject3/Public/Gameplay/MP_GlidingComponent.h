@@ -7,6 +7,7 @@
 #include "MP_GlidingComponent.generated.h"
 
 
+class UNiagaraComponent;
 class UCharacterMovementComponent;
 class UMP_GlideDataAsset;
 
@@ -52,13 +53,7 @@ protected:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Glide")
     UMP_GlideDataAsset* GlidingDataAsset = nullptr;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Glide")
-    UForceFeedbackEffect* ForceFeedbackEffect = nullptr;
     
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Glide")
-    bool bIsGliding = false;
-
     // HIDDEN SETTINGS ------------------------------------------------------------------------
     
     // References
@@ -67,6 +62,13 @@ protected:
 
     UPROPERTY(BlueprintReadOnly, Category="Glide")
     TWeakObjectPtr<UCharacterMovementComponent> CharacterMovementComponent;
+
+    // System Variables
+    UPROPERTY(BlueprintReadOnly, Category="Glide")
+    bool bIsGliding = false;
+
+    UPROPERTY(BlueprintReadOnly, Category="Glide")
+    UNiagaraComponent* NiagaraComponent = nullptr;
 
     // Owner Variables Cache
     UPROPERTY(BlueprintReadOnly, Category="Glide")

@@ -3,6 +3,8 @@
 
 #include "Gameplay/MP_GlidingComponent.h"
 
+#include "NiagaraComponent.h"
+#include "NiagaraFunctionLibrary.h"
 #include "DataAsset/MP_GlideDataAsset.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -48,6 +50,9 @@ void UMP_GlidingComponent::TickComponent(float DeltaTime, enum ELevelTick TickTy
 
     if (!bIsGliding) return;
     if (!IsValid(GlidingDataAsset) && !CharacterMovementComponent.IsValid()) return;
+
+    if (IsValid(GlidingDataAsset) && IsValid(GlidingDataAsset->ForceFeedbackGlideLoop))
+        GetWorld()->GetFirstPlayerController()->ClientPlayForceFeedback(GlidingDataAsset->ForceFeedbackGlideLoop);
     
     float TargetVelocityZ = -GlidingDataAsset->VelocityZ;
     if (CharacterMovementComponent->Velocity.Z < TargetVelocityZ)
@@ -76,6 +81,7 @@ void UMP_GlidingComponent::OnReachJumpApex()
 void UMP_GlidingComponent::OnLandedDelegate(const FHitResult& Hit)
 {
     bHasJump = false;
+    if (bIsGliding) StopGliding();
 }
 
 void UMP_GlidingComponent::StartGliding()
@@ -95,8 +101,8 @@ void UMP_GlidingComponent::StartGliding()
 void UMP_GlidingComponent::OnGliding()
 {
     // Play force feedback if the force feedback is valid
-    if (IsValid(ForceFeedbackEffect))
-        GetWorld()->GetFirstPlayerController()->ClientPlayForceFeedback(ForceFeedbackEffect);
+    if (IsValid(GlidingDataAsset) && IsValid(GlidingDataAsset->ForceFeedbackStartGlide))
+        GetWorld()->GetFirstPlayerController()->ClientPlayForceFeedback(GlidingDataAsset->ForceFeedbackStartGlide);
 
     // Check if the CharacterMovementComponent and the GlidingDataAsset is valid.
     if (!CharacterMovementComponent.IsValid() && !IsValid(GlidingDataAsset)) return;
@@ -107,6 +113,20 @@ void UMP_GlidingComponent::OnGliding()
     // Character->bUseControllerRotationYaw = false;
     // CharacterMovementComponent->bOrientRotationToMovement = true;
     Character->JumpCurrentCount = 2;
+
+    if (IsValid(GlidingDataAsset) && IsValid(GlidingDataAsset->NiagaraEffect) && !IsValid(NiagaraComponent))
+    {
+        USceneComponent* NiagaraSceneComponent = Cast<USceneComponent>(Character->FindComponentByTag(USceneComponent::StaticClass(),
+            GlidingDataAsset->NiagaraComponentTag));
+        
+        FFXSystemSpawnParameters SpawnParams;
+        SpawnParams.SystemTemplate = GlidingDataAsset->NiagaraEffect;
+        SpawnParams.AttachToComponent = NiagaraSceneComponent;
+        SpawnParams.bAutoDestroy = false;
+        SpawnParams.LocationType = EAttachLocation::SnapToTarget;
+        
+        NiagaraComponent = UNiagaraFunctionLibrary::SpawnSystemAttachedWithParams(SpawnParams);
+    }
 
     bIsGliding = true;
     bAskGlide = false;
@@ -123,8 +143,15 @@ void UMP_GlidingComponent::StopGliding()
     CharacterMovementComponent->GravityScale = PreviousGravityScale;
     CharacterMovementComponent->AirControl = PreviousAirControl;
     CharacterMovementComponent->RotationRate = PreviousRotationRate;
-    // CharacterMovementComponent->bOrientRotationToMovement = false;
-    // Character->bUseControllerRotationYaw = true;
+
+    if (NiagaraComponent)
+    {
+        NiagaraComponent->DeactivateImmediate();
+        NiagaraComponent->DestroyComponent();
+    }
+
+    if (IsValid(GlidingDataAsset) && IsValid(GlidingDataAsset->ForceFeedbackGlideLoop))
+        GetWorld()->GetFirstPlayerController()->ClientStopForceFeedback(GlidingDataAsset->ForceFeedbackGlideLoop, NAME_None);
     
     bIsGliding = false;
 }
