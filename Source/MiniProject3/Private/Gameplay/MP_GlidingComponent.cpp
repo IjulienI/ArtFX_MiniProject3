@@ -3,6 +3,8 @@
 
 #include "Gameplay/MP_GlidingComponent.h"
 
+#include "NiagaraComponent.h"
+#include "NiagaraFunctionLibrary.h"
 #include "DataAsset/MP_GlideDataAsset.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -26,6 +28,9 @@ void UMP_GlidingComponent::BeginPlay()
     if (!Character.IsValid()) return;
     
     CharacterMovementComponent = Character->GetCharacterMovement();
+
+    NiagaraSceneComponent = Cast<USceneComponent>(Character->FindComponentByTag(USceneComponent::StaticClass(),
+        GlidingDataAsset->NiagaraComponentTag));
     
     // Bind to jump apex
     Character->OnReachedJumpApex.AddUniqueDynamic(this, &UMP_GlidingComponent::OnReachJumpApex);
@@ -48,6 +53,9 @@ void UMP_GlidingComponent::TickComponent(float DeltaTime, enum ELevelTick TickTy
 
     if (!bIsGliding) return;
     if (!IsValid(GlidingDataAsset) && !CharacterMovementComponent.IsValid()) return;
+
+    if (IsValid(GlidingDataAsset) && IsValid(GlidingDataAsset->ForceFeedbackGlideLoop))
+        GetWorld()->GetFirstPlayerController()->ClientPlayForceFeedback(GlidingDataAsset->ForceFeedbackGlideLoop);
     
     float TargetVelocityZ = -GlidingDataAsset->VelocityZ;
     if (CharacterMovementComponent->Velocity.Z < TargetVelocityZ)
@@ -60,9 +68,11 @@ void UMP_GlidingComponent::TickComponent(float DeltaTime, enum ELevelTick TickTy
         OwnerVelocityNormalized.Normalize();
         
         //Character->GetMesh()->SetRelativeRotation(FRotationMatrix::MakeFromX(OwnerVelocityNormalized).Rotator() + FRotator(0.0f, 0.0f, -90.0f));
-        
-        DrawDebugDirectionalArrow(GetWorld(), OwnerLocation, OwnerVelocityNormalized * 100 + OwnerLocation, 1, FColor::Blue, false, -1);
+        if (bDrawDebug)
+            DrawDebugDirectionalArrow(GetWorld(), OwnerLocation, OwnerVelocityNormalized * 100 + OwnerLocation, 1, FColor::Blue, false, -1);
     }
+
+    if (DetectWallRunCollision()) StopGliding();
 }
 
 void UMP_GlidingComponent::OnReachJumpApex()
@@ -76,12 +86,15 @@ void UMP_GlidingComponent::OnReachJumpApex()
 void UMP_GlidingComponent::OnLandedDelegate(const FHitResult& Hit)
 {
     bHasJump = false;
+    if (bIsGliding) StopGliding();
 }
 
 void UMP_GlidingComponent::StartGliding()
 {
     if (CharacterMovementComponent.IsValid() && !CharacterMovementComponent->IsFalling()) return;
     if (bIsGliding) return;
+
+    if (DetectWallRunCollision()) return;
     
     PreviousGravityScale = CharacterMovementComponent->GravityScale;
     PreviousAirControl = CharacterMovementComponent->AirControl;
@@ -95,8 +108,8 @@ void UMP_GlidingComponent::StartGliding()
 void UMP_GlidingComponent::OnGliding()
 {
     // Play force feedback if the force feedback is valid
-    if (IsValid(ForceFeedbackEffect))
-        GetWorld()->GetFirstPlayerController()->ClientPlayForceFeedback(ForceFeedbackEffect);
+    if (IsValid(GlidingDataAsset) && IsValid(GlidingDataAsset->ForceFeedbackStartGlide))
+        GetWorld()->GetFirstPlayerController()->ClientPlayForceFeedback(GlidingDataAsset->ForceFeedbackStartGlide);
 
     // Check if the CharacterMovementComponent and the GlidingDataAsset is valid.
     if (!CharacterMovementComponent.IsValid() && !IsValid(GlidingDataAsset)) return;
@@ -104,9 +117,23 @@ void UMP_GlidingComponent::OnGliding()
     CharacterMovementComponent->GravityScale = GlidingDataAsset->GravityScale;
     CharacterMovementComponent->AirControl = GlidingDataAsset->AirControl;
     CharacterMovementComponent->RotationRate = GlidingDataAsset->RotationRate;
-    // Character->bUseControllerRotationYaw = false;
-    // CharacterMovementComponent->bOrientRotationToMovement = true;
+
+    // ResetJump
     Character->JumpCurrentCount = 2;
+
+    if (IsValid(GlidingDataAsset) && IsValid(GlidingDataAsset->NiagaraEffect) && !IsValid(NiagaraComponent))
+    {        
+        if(NiagaraSceneComponent.IsValid())
+        {
+            FFXSystemSpawnParameters SpawnParams;
+            SpawnParams.SystemTemplate = GlidingDataAsset->NiagaraEffect;
+            SpawnParams.AttachToComponent = NiagaraSceneComponent.Get();
+            SpawnParams.bAutoDestroy = false;
+            SpawnParams.LocationType = EAttachLocation::SnapToTarget;
+            
+            NiagaraComponent = UNiagaraFunctionLibrary::SpawnSystemAttachedWithParams(SpawnParams);
+        }
+    }
 
     bIsGliding = true;
     bAskGlide = false;
@@ -123,8 +150,15 @@ void UMP_GlidingComponent::StopGliding()
     CharacterMovementComponent->GravityScale = PreviousGravityScale;
     CharacterMovementComponent->AirControl = PreviousAirControl;
     CharacterMovementComponent->RotationRate = PreviousRotationRate;
-    // CharacterMovementComponent->bOrientRotationToMovement = false;
-    // Character->bUseControllerRotationYaw = true;
+
+    if (NiagaraComponent)
+    {
+        NiagaraComponent->DeactivateImmediate();
+        NiagaraComponent->DestroyComponent();
+    }
+
+    if (IsValid(GlidingDataAsset) && IsValid(GlidingDataAsset->ForceFeedbackGlideLoop))
+        GetWorld()->GetFirstPlayerController()->ClientStopForceFeedback(GlidingDataAsset->ForceFeedbackGlideLoop, NAME_None);
     
     bIsGliding = false;
 }
@@ -137,4 +171,39 @@ bool UMP_GlidingComponent::GetIsGliding()
 void UMP_GlidingComponent::SetHasJump(bool bInHasJump)
 {
     bHasJump = bInHasJump;
+}
+
+bool UMP_GlidingComponent::DetectWallRunCollision()
+{
+    // Trace to detect Wall Run
+    const auto* World =  GetWorld();
+    
+    const FVector StartTrace = GetOwner()->GetActorLocation();
+    const FCollisionShape SphereShape = FCollisionShape::MakeSphere(TraceRadius);
+    
+    FCollisionQueryParams Params(SCENE_QUERY_STAT(TraceForwardSingle), false, GetOwner());
+    Params.bReturnPhysicalMaterial = false;
+
+    FHitResult OutHit;
+    const bool bHit = World->SweepSingleByChannel(
+        OutHit,
+        StartTrace,
+        StartTrace,
+        FQuat::Identity,
+        WallRunCollisionChannel,
+        SphereShape,
+        Params
+    );
+
+    if (bDrawDebug)
+    {
+        const FColor Color = bHit ? FColor::Red : FColor::Green;
+        DrawDebugLine(World, StartTrace, StartTrace, Color, false, -1.0f, 0, 1.0f);
+        DrawDebugSphere(World, StartTrace, TraceRadius, 12, Color, false, -1.0f);
+        if (bHit)
+        {
+            DrawDebugSphere(World, OutHit.ImpactPoint, TraceRadius * 0.5f, 12, FColor::Yellow, false, 1.2f);
+        }
+    }
+    return bHit;
 }
