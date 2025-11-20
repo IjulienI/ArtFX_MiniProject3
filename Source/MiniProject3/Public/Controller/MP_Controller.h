@@ -1,4 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -6,6 +5,7 @@
 #include "GameFramework/PlayerController.h"
 #include "MP_Controller.generated.h"
 
+class UMP_GlidingController;
 class UMP_SlidingController;
 class UMP_WallRunController;
 class UMP_DashController;
@@ -37,7 +37,7 @@ protected:
     void TurnPlayer(const FInputActionValue& Value);
 
     void StartSprintPlayer(const FInputActionValue& Value);
-    void StopSprintPlayer(const FInputActionValue& Value);
+    void StopSprintPlayer();
     
     void StartJumpPlayer(const FInputActionValue& Value);
     void StopJumpPlayer(const FInputActionValue& Value);
@@ -69,10 +69,7 @@ protected:
     // TWeakObjectPtr<UCC_PickupCountController> PickupCount;
     TWeakObjectPtr<UMP_WallRunController> WallRunController;
     TWeakObjectPtr<UMP_DashController> DashController;
-    // TWeakObjectPtr<UCC_GravityGunController> GravityGunController;
-    // TWeakObjectPtr<UScoreComponentController> ScoreController;
-    // TWeakObjectPtr<UCC_PickupSpawnerController> PickupSpawner;
-    // TWeakObjectPtr<UCC_PickupCountController> PickupCount;
+    TWeakObjectPtr<UMP_GlidingController> GlidingController;
 
     UPROPERTY(EditDefaultsOnly, Category = "EnhancedInput|Mouse", meta = (ClampMin = 0.1f, ClampMax = 100.0f))
     float SensitivityX = 0.8f;

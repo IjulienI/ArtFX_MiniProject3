@@ -28,6 +28,8 @@ protected:
 	//Inputs
 public:
 	void OnDashInputPressed();
+	UFUNCTION(BlueprintCallable, Category = "Dash")
+	void StopDash();
 	//End of inputs
 	
 	//Collisions
