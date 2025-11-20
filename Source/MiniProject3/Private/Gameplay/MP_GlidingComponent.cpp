@@ -56,21 +56,30 @@ void UMP_GlidingComponent::TickComponent(float DeltaTime, enum ELevelTick TickTy
 
     if (IsValid(GlidingDataAsset) && IsValid(GlidingDataAsset->ForceFeedbackGlideLoop))
         GetWorld()->GetFirstPlayerController()->ClientPlayForceFeedback(GlidingDataAsset->ForceFeedbackGlideLoop);
+
+    // Get Velocity and direction infos
+    const FVector Velocity = CharacterMovementComponent->Velocity;
+    const FVector Direction = Velocity.GetSafeNormal();
     
     float TargetVelocityZ = -GlidingDataAsset->VelocityZ;
-    if (CharacterMovementComponent->Velocity.Z < TargetVelocityZ)
+    if (Velocity.Z < TargetVelocityZ)
     {
-        float NewVelocityZ = FMath::FInterpTo(CharacterMovementComponent->Velocity.Z, TargetVelocityZ, DeltaTime, GlidingDataAsset->Deceleration);
+        float NewVelocityZ = FMath::FInterpTo(Velocity.Z, TargetVelocityZ, DeltaTime, GlidingDataAsset->DecelerationZ);
         CharacterMovementComponent->Velocity.Z = NewVelocityZ;
         
         const FVector OwnerLocation = Character->GetActorLocation();
-        FVector OwnerVelocityNormalized = CharacterMovementComponent->Velocity;
-        OwnerVelocityNormalized.Normalize();
         
         //Character->GetMesh()->SetRelativeRotation(FRotationMatrix::MakeFromX(OwnerVelocityNormalized).Rotator() + FRotator(0.0f, 0.0f, -90.0f));
         if (bDrawDebug)
-            DrawDebugDirectionalArrow(GetWorld(), OwnerLocation, OwnerVelocityNormalized * 100 + OwnerLocation, 1, FColor::Blue, false, -1);
+            DrawDebugDirectionalArrow(GetWorld(), OwnerLocation, Direction * 100 + OwnerLocation, 1, FColor::Blue, false, -1);
     }
+
+    // Clamp Velocity
+    const FVector TargetSpeed = Direction * GlidingDataAsset->Speed;
+    
+    FVector NewVelocity = FMath::VInterpTo(Velocity, TargetSpeed, DeltaTime, GlidingDataAsset->DecelerationZ);
+    CharacterMovementComponent->Velocity.X = NewVelocity.X;
+    CharacterMovementComponent->Velocity.Y = NewVelocity.Y;
 
     if (DetectWallRunCollision()) StopGliding();
 }

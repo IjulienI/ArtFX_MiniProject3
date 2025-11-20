@@ -20,13 +20,19 @@ public:
     float GravityScale = 0.4f;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Glide")
+    float Speed = 200.0f;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Glide")
+    float Deceleration = 4.0f;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Glide")
     float AirControl = 1.0f;
     
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Glide")
     float VelocityZ = 10.0f;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Glide")
-    float Deceleration = 4.0f;
+    float DecelerationZ = 4.0f;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Glide")
     FRotator RotationRate = FRotator(0.0f, 0.0f, 120.0f);
