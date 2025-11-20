@@ -10,6 +10,7 @@
 #include "DataAsset/MP_PlayerDataAsset.h"
 #include "DataAsset/MP_WallRunDataAsset.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Gameplay/MP_GlidingComponent.h"
 #include "MiniProject3/Public/Controller/MP_SlidingController.h"
 #include "Gameplay/MP_WallRunComponent.h"
 #include "MiniProject3/Public/Gameplay/MP_BaseCharacter.h"
@@ -69,6 +70,8 @@ void AMP_Controller::SetPawn(APawn* InPawn)
     {
         GlidingController->SetupInputComponentGliding(InputComponent, InPawn);
     }
+    GlidingComponent = InPawn->FindComponentByClass<UMP_GlidingComponent>();
+    
     // Exemple : 
     // GravityGunController = FindComponentByClass<UCC_GravityGunController>();
     // if (GravityGunController.IsValid())
@@ -134,8 +137,19 @@ void AMP_Controller::StartJumpPlayer(const FInputActionValue& Value)
 {
     if (!ensure(Character.IsValid())) return;
 
-    CharacterMovementComponent->bNotifyApex = true;
-    Character->Jump();
+    if (GlidingComponent.IsValid())
+    {
+        if (!GlidingComponent->GetIsGliding())
+        {
+            CharacterMovementComponent->bNotifyApex = true;
+            Character->Jump();
+        }
+    }
+    else
+    {
+        CharacterMovementComponent->bNotifyApex = true;
+        Character->Jump();
+    }
 }
 
 void AMP_Controller::StopJumpPlayer(const FInputActionValue& Value)
