@@ -23,8 +23,11 @@ public:
     void StopGliding();
 
     // Getter
-    UFUNCTION(BlueprintCallable, Category="Sliding")
+    UFUNCTION(BlueprintCallable, BlueprintPure, Category="Sliding")
     bool GetIsGliding();
+
+    UFUNCTION(BlueprintCallable, BlueprintPure, Category="Sliding")
+    float GetDuration();
 
     // Setter
     void SetHasJump(bool bInHasJump);
@@ -72,9 +75,15 @@ protected:
     UPROPERTY(BlueprintReadOnly, Category="Glide")
     TWeakObjectPtr<UCharacterMovementComponent> CharacterMovementComponent;
 
+    UPROPERTY(BlueprintReadOnly, Category="Glide")
+    TWeakObjectPtr<USceneComponent> NiagaraSceneComponent;
+
     // System Variables
     UPROPERTY(BlueprintReadOnly, Category="Glide")
     bool bIsGliding = false;
+
+    UPROPERTY(BlueprintReadOnly, Category="Glide")
+    float CurrentDuration = 0.0f;
 
     UPROPERTY(BlueprintReadOnly, Category="Glide")
     UNiagaraComponent* NiagaraComponent = nullptr;
