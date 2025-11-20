@@ -65,9 +65,11 @@ void UMP_GlidingComponent::TickComponent(float DeltaTime, enum ELevelTick TickTy
         OwnerVelocityNormalized.Normalize();
         
         //Character->GetMesh()->SetRelativeRotation(FRotationMatrix::MakeFromX(OwnerVelocityNormalized).Rotator() + FRotator(0.0f, 0.0f, -90.0f));
-        
-        DrawDebugDirectionalArrow(GetWorld(), OwnerLocation, OwnerVelocityNormalized * 100 + OwnerLocation, 1, FColor::Blue, false, -1);
+        if (bDrawDebug)
+            DrawDebugDirectionalArrow(GetWorld(), OwnerLocation, OwnerVelocityNormalized * 100 + OwnerLocation, 1, FColor::Blue, false, -1);
     }
+
+    if (DetectWallRunCollision()) StopGliding();
 }
 
 void UMP_GlidingComponent::OnReachJumpApex()
@@ -88,6 +90,8 @@ void UMP_GlidingComponent::StartGliding()
 {
     if (CharacterMovementComponent.IsValid() && !CharacterMovementComponent->IsFalling()) return;
     if (bIsGliding) return;
+
+    if (DetectWallRunCollision()) return;
     
     PreviousGravityScale = CharacterMovementComponent->GravityScale;
     PreviousAirControl = CharacterMovementComponent->AirControl;
@@ -164,4 +168,39 @@ bool UMP_GlidingComponent::GetIsGliding()
 void UMP_GlidingComponent::SetHasJump(bool bInHasJump)
 {
     bHasJump = bInHasJump;
+}
+
+bool UMP_GlidingComponent::DetectWallRunCollision()
+{
+    // Trace to detect Wall Run
+    const auto* World =  GetWorld();
+    
+    const FVector StartTrace = GetOwner()->GetActorLocation();
+    const FCollisionShape SphereShape = FCollisionShape::MakeSphere(TraceRadius);
+    
+    FCollisionQueryParams Params(SCENE_QUERY_STAT(TraceForwardSingle), false, GetOwner());
+    Params.bReturnPhysicalMaterial = false;
+
+    FHitResult OutHit;
+    const bool bHit = World->SweepSingleByChannel(
+        OutHit,
+        StartTrace,
+        StartTrace,
+        FQuat::Identity,
+        WallRunCollisionChannel,
+        SphereShape,
+        Params
+    );
+
+    if (bDrawDebug)
+    {
+        const FColor Color = bHit ? FColor::Red : FColor::Green;
+        DrawDebugLine(World, StartTrace, StartTrace, Color, false, -1.0f, 0, 1.0f);
+        DrawDebugSphere(World, StartTrace, TraceRadius, 12, Color, false, -1.0f);
+        if (bHit)
+        {
+            DrawDebugSphere(World, OutHit.ImpactPoint, TraceRadius * 0.5f, 12, FColor::Yellow, false, 1.2f);
+        }
+    }
+    return bHit;
 }

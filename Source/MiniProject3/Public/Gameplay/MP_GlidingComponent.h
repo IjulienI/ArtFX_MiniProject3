@@ -53,6 +53,15 @@ protected:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Glide")
     UMP_GlideDataAsset* GlidingDataAsset = nullptr;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Glide")
+    bool bDrawDebug = true;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Glide|Trace")
+    TEnumAsByte<ECollisionChannel> WallRunCollisionChannel = ECollisionChannel::ECC_EngineTraceChannel1;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Glide|Trace")
+    float TraceRadius = 100.0f;
     
     // HIDDEN SETTINGS ------------------------------------------------------------------------
     
@@ -81,6 +90,8 @@ protected:
     FRotator PreviousRotationRate = FRotator::ZeroRotator;
 
 private:
+    bool DetectWallRunCollision();
+    
     bool bHasJump = false;
     bool bAskGlide = false;
 };
