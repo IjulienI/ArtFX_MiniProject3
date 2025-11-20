@@ -12,7 +12,7 @@ UMP_SlidingController::UMP_SlidingController()
     PrimaryComponentTick.bCanEverTick = false;
 }
 
-void UMP_SlidingController::SetupInputComponentGravityGun(TObjectPtr<UInputComponent> InputComponent, APawn* InPawn)
+void UMP_SlidingController::SetupInputComponentSliding(TObjectPtr<UInputComponent> InputComponent, APawn* InPawn)
 {
     if (IsValid(InPawn))
         SlidingComponent = InPawn->FindComponentByClass<UMP_SlidingComponent>();
@@ -28,12 +28,11 @@ void UMP_SlidingController::SetupInputComponentGravityGun(TObjectPtr<UInputCompo
     if (!EnhancedInputComponent) return;
 
     // You need to put an input in the AC_SlidingController !!
-    if (ensure(InputActionSliding))
+    if (InputActionSliding)
     {
         EnhancedInputComponent->BindAction(InputActionSliding, ETriggerEvent::Started, this, &UMP_SlidingController::StartSliding);
         EnhancedInputComponent->BindAction(InputActionSliding, ETriggerEvent::Completed, this, &UMP_SlidingController::StopSliding);
     }
-
 }
 
 void UMP_SlidingController::StartSliding(const FInputActionValue& Value)
