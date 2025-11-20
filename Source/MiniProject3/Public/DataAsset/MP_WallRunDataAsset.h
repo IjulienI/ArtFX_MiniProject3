@@ -27,4 +27,12 @@ public:
 	float CharacterMeshTiltAngle = 20.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0.0", ClampMax = "90.0"), Category = "WallRun")
 	float JumpOfWallUpAngleDirection = 20.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0.0", ClampMax = "1000.0"), Category = "WallRun")
+	float JumpVelBeforeWallRunStop = 300.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0.0", ClampMax = "1000.0"), Category = "WallRun")
+	float HeightBeforeWallRun = 100.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0.0", ClampMax = "1000.0"), Category = "WallRun")
+	float CameraOffsetWallRun = 180.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0.0", ClampMax = "10.0"), Category = "WallRun")
+	float CameraOffsetInterpSpeed = 5.0f;
 };
