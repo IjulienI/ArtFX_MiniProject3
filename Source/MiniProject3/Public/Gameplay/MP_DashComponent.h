@@ -30,6 +30,10 @@ public:
 	void OnDashInputPressed();
 	UFUNCTION(BlueprintCallable, Category = "Dash")
 	void StopDash();
+
+public:
+	UPROPERTY(BlueprintReadOnly, Category = "Dash")
+	bool bInDash = false;
 	//End of inputs
 	
 	//Collisions

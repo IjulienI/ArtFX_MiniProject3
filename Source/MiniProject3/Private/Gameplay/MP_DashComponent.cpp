@@ -89,6 +89,7 @@ void UMP_DashComponent::OnDashInputPressed()
 
 	ActualDashTime = 0;
 	bCanDash = false;
+	bInDash = true;
 	LastVelocity = Character->GetCharacterMovement()->Velocity;
 	Character->GetCharacterMovement()->Velocity = FVector::ZeroVector;
 	Character->GetCharacterMovement()->StopMovementImmediately();
@@ -109,6 +110,7 @@ void UMP_DashComponent::ResetCooldown()
 	//Clear Timer
 	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
 	TimerManager.ClearTimer(DashCooldownTimerHangle);
+	bInDash = false;
 }
 
 void UMP_DashComponent::ActualiseDashTimeline()
@@ -134,5 +136,9 @@ void UMP_DashComponent::ActualiseDashTimeline()
 											,FMath::Lerp(RaycastStart.Z, RaycastEnd.Z, alfa) });
 
 		Character->GetCharacterMovement()->Velocity = LastVelocity * DashDataAsset->FallDistanceFactorAfterDash * FVector(1, 1, 0);
+	}
+	else 
+	{
+		bInDash = false;
 	}
 }

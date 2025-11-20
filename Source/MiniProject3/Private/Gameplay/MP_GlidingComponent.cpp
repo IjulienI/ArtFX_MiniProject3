@@ -28,6 +28,9 @@ void UMP_GlidingComponent::BeginPlay()
     if (!Character.IsValid()) return;
     
     CharacterMovementComponent = Character->GetCharacterMovement();
+
+    NiagaraSceneComponent = Cast<USceneComponent>(Character->FindComponentByTag(USceneComponent::StaticClass(),
+        GlidingDataAsset->NiagaraComponentTag));
     
     // Bind to jump apex
     Character->OnReachedJumpApex.AddUniqueDynamic(this, &UMP_GlidingComponent::OnReachJumpApex);
@@ -114,22 +117,22 @@ void UMP_GlidingComponent::OnGliding()
     CharacterMovementComponent->GravityScale = GlidingDataAsset->GravityScale;
     CharacterMovementComponent->AirControl = GlidingDataAsset->AirControl;
     CharacterMovementComponent->RotationRate = GlidingDataAsset->RotationRate;
-    // Character->bUseControllerRotationYaw = false;
-    // CharacterMovementComponent->bOrientRotationToMovement = true;
+
+    // ResetJump
     Character->JumpCurrentCount = 2;
 
     if (IsValid(GlidingDataAsset) && IsValid(GlidingDataAsset->NiagaraEffect) && !IsValid(NiagaraComponent))
-    {
-        USceneComponent* NiagaraSceneComponent = Cast<USceneComponent>(Character->FindComponentByTag(USceneComponent::StaticClass(),
-            GlidingDataAsset->NiagaraComponentTag));
-        
-        FFXSystemSpawnParameters SpawnParams;
-        SpawnParams.SystemTemplate = GlidingDataAsset->NiagaraEffect;
-        SpawnParams.AttachToComponent = NiagaraSceneComponent;
-        SpawnParams.bAutoDestroy = false;
-        SpawnParams.LocationType = EAttachLocation::SnapToTarget;
-        
-        NiagaraComponent = UNiagaraFunctionLibrary::SpawnSystemAttachedWithParams(SpawnParams);
+    {        
+        if(NiagaraSceneComponent.IsValid())
+        {
+            FFXSystemSpawnParameters SpawnParams;
+            SpawnParams.SystemTemplate = GlidingDataAsset->NiagaraEffect;
+            SpawnParams.AttachToComponent = NiagaraSceneComponent.Get();
+            SpawnParams.bAutoDestroy = false;
+            SpawnParams.LocationType = EAttachLocation::SnapToTarget;
+            
+            NiagaraComponent = UNiagaraFunctionLibrary::SpawnSystemAttachedWithParams(SpawnParams);
+        }
     }
 
     bIsGliding = true;
