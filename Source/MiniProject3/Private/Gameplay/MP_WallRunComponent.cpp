@@ -21,6 +21,11 @@ void UMP_WallRunComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
 
+void UMP_WallRunComponent::StartJumpHeight()
+{
+	StartJumpFromGroundHeight = GetOwner()->GetActorLocation().Z;
+}
+
 void UMP_WallRunComponent::ResetJumpCount()
 {
 	auto Owner = GetOwner();
