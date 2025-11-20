@@ -1,4 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -38,7 +37,7 @@ protected:
     void TurnPlayer(const FInputActionValue& Value);
 
     void StartSprintPlayer(const FInputActionValue& Value);
-    void StopSprintPlayer(const FInputActionValue& Value);
+    void StopSprintPlayer();
     
     void StartJumpPlayer(const FInputActionValue& Value);
     void StopJumpPlayer(const FInputActionValue& Value);

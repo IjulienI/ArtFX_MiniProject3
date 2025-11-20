@@ -94,6 +94,14 @@ void UMP_DashComponent::OnDashInputPressed()
 	Character->GetCharacterMovement()->StopMovementImmediately();
 }
 
+void UMP_DashComponent::StopDash()
+{
+	ActualDashTime = 0;
+	bDashInAir = false;
+	ResetCooldown();
+	Character->GetCharacterMovement()->Velocity = FVector::ZeroVector;
+}
+
 void UMP_DashComponent::ResetCooldown()
 {
 	bCanDash = true;
