@@ -3,6 +3,8 @@
 
 #include "Gameplay/MP_GlidingComponent.h"
 
+#include "NiagaraComponent.h"
+#include "NiagaraFunctionLibrary.h"
 #include "DataAsset/MP_GlideDataAsset.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -26,10 +28,17 @@ void UMP_GlidingComponent::BeginPlay()
     if (!Character.IsValid()) return;
     
     CharacterMovementComponent = Character->GetCharacterMovement();
+
+    NiagaraSceneComponent = Cast<USceneComponent>(Character->FindComponentByTag(USceneComponent::StaticClass(),
+        GlidingDataAsset->NiagaraComponentTag));
     
     // Bind to jump apex
     Character->OnReachedJumpApex.AddUniqueDynamic(this, &UMP_GlidingComponent::OnReachJumpApex);
     Character->LandedDelegate.AddUniqueDynamic(this, &UMP_GlidingComponent::OnLandedDelegate);
+
+    // Setup Duration
+    if (IsValid(GlidingDataAsset))
+        CurrentDuration = GlidingDataAsset->Duration;
 }
 
 void UMP_GlidingComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -48,20 +57,47 @@ void UMP_GlidingComponent::TickComponent(float DeltaTime, enum ELevelTick TickTy
 
     if (!bIsGliding) return;
     if (!IsValid(GlidingDataAsset) && !CharacterMovementComponent.IsValid()) return;
+
+    if (IsValid(GlidingDataAsset->ForceFeedbackGlideLoop))
+        GetWorld()->GetFirstPlayerController()->ClientPlayForceFeedback(GlidingDataAsset->ForceFeedbackGlideLoop);
+
+    // Get Velocity and direction infos
+    const FVector Velocity = CharacterMovementComponent->Velocity;
+    const FVector Direction = Velocity.GetSafeNormal();
     
     float TargetVelocityZ = -GlidingDataAsset->VelocityZ;
-    if (CharacterMovementComponent->Velocity.Z < TargetVelocityZ)
+    if (Velocity.Z < TargetVelocityZ)
     {
-        float NewVelocityZ = FMath::FInterpTo(CharacterMovementComponent->Velocity.Z, TargetVelocityZ, DeltaTime, GlidingDataAsset->Deceleration);
+        float NewVelocityZ = FMath::FInterpTo(Velocity.Z, TargetVelocityZ, DeltaTime, GlidingDataAsset->DecelerationZ);
         CharacterMovementComponent->Velocity.Z = NewVelocityZ;
         
         const FVector OwnerLocation = Character->GetActorLocation();
-        FVector OwnerVelocityNormalized = CharacterMovementComponent->Velocity;
-        OwnerVelocityNormalized.Normalize();
         
         //Character->GetMesh()->SetRelativeRotation(FRotationMatrix::MakeFromX(OwnerVelocityNormalized).Rotator() + FRotator(0.0f, 0.0f, -90.0f));
-        
-        DrawDebugDirectionalArrow(GetWorld(), OwnerLocation, OwnerVelocityNormalized * 100 + OwnerLocation, 1, FColor::Blue, false, -1);
+        if (bDrawDebug)
+            DrawDebugDirectionalArrow(GetWorld(), OwnerLocation, Direction * 100 + OwnerLocation, 1, FColor::Blue, false, -1);
+    }
+
+    // Clamp Velocity
+    const FVector TargetSpeed = Direction * GlidingDataAsset->Speed;
+    
+    FVector NewVelocity = FMath::VInterpTo(Velocity, TargetSpeed, DeltaTime, GlidingDataAsset->DecelerationZ);
+    CharacterMovementComponent->Velocity.X = NewVelocity.X;
+    CharacterMovementComponent->Velocity.Y = NewVelocity.Y;
+
+    if (DetectWallRunCollision()) StopGliding();
+
+    // Decrease Duration
+    const float NewDuration = CurrentDuration - 1.0f *  DeltaTime;
+    CurrentDuration = FMath::Clamp(NewDuration, 0, GlidingDataAsset->Duration);
+
+    if (IsValid(NiagaraComponent))
+        NiagaraComponent->SetFloatParameter(GlidingDataAsset->NiagaraDurationUserParameterName, CurrentDuration);
+
+    // If Duration == 0, stop gliding
+    if (CurrentDuration <= 0)
+    {
+        StopGliding();
     }
 }
 
@@ -76,12 +112,21 @@ void UMP_GlidingComponent::OnReachJumpApex()
 void UMP_GlidingComponent::OnLandedDelegate(const FHitResult& Hit)
 {
     bHasJump = false;
+    
+    // Reset Duration
+    if (IsValid(GlidingDataAsset))
+        CurrentDuration = GlidingDataAsset->Duration;
+    
+    if (bIsGliding) StopGliding();
 }
 
 void UMP_GlidingComponent::StartGliding()
 {
+    if (CurrentDuration <= 0.0f) return;
     if (CharacterMovementComponent.IsValid() && !CharacterMovementComponent->IsFalling()) return;
     if (bIsGliding) return;
+
+    if (DetectWallRunCollision()) return;
     
     PreviousGravityScale = CharacterMovementComponent->GravityScale;
     PreviousAirControl = CharacterMovementComponent->AirControl;
@@ -95,8 +140,8 @@ void UMP_GlidingComponent::StartGliding()
 void UMP_GlidingComponent::OnGliding()
 {
     // Play force feedback if the force feedback is valid
-    if (IsValid(ForceFeedbackEffect))
-        GetWorld()->GetFirstPlayerController()->ClientPlayForceFeedback(ForceFeedbackEffect);
+    if (IsValid(GlidingDataAsset) && IsValid(GlidingDataAsset->ForceFeedbackStartGlide))
+        GetWorld()->GetFirstPlayerController()->ClientPlayForceFeedback(GlidingDataAsset->ForceFeedbackStartGlide);
 
     // Check if the CharacterMovementComponent and the GlidingDataAsset is valid.
     if (!CharacterMovementComponent.IsValid() && !IsValid(GlidingDataAsset)) return;
@@ -104,9 +149,20 @@ void UMP_GlidingComponent::OnGliding()
     CharacterMovementComponent->GravityScale = GlidingDataAsset->GravityScale;
     CharacterMovementComponent->AirControl = GlidingDataAsset->AirControl;
     CharacterMovementComponent->RotationRate = GlidingDataAsset->RotationRate;
-    // Character->bUseControllerRotationYaw = false;
-    // CharacterMovementComponent->bOrientRotationToMovement = true;
-    Character->JumpCurrentCount = 2;
+
+    if (IsValid(GlidingDataAsset) && IsValid(GlidingDataAsset->NiagaraEffect) && !IsValid(NiagaraComponent))
+    {        
+        if(NiagaraSceneComponent.IsValid())
+        {
+            FFXSystemSpawnParameters SpawnParams;
+            SpawnParams.SystemTemplate = GlidingDataAsset->NiagaraEffect;
+            SpawnParams.AttachToComponent = NiagaraSceneComponent.Get();
+            SpawnParams.bAutoDestroy = false;
+            SpawnParams.LocationType = EAttachLocation::SnapToTarget;
+            
+            NiagaraComponent = UNiagaraFunctionLibrary::SpawnSystemAttachedWithParams(SpawnParams);
+        }
+    }
 
     bIsGliding = true;
     bAskGlide = false;
@@ -116,15 +172,22 @@ void UMP_GlidingComponent::StopGliding()
 {
     bAskGlide = false;
     if (!bIsGliding) return;
-    
+
     // Check if the CharacterMovementComponent and the GlidindDataAsset is valid.
     if (!CharacterMovementComponent.IsValid() && !IsValid(GlidingDataAsset)) return;
 
     CharacterMovementComponent->GravityScale = PreviousGravityScale;
     CharacterMovementComponent->AirControl = PreviousAirControl;
     CharacterMovementComponent->RotationRate = PreviousRotationRate;
-    // CharacterMovementComponent->bOrientRotationToMovement = false;
-    // Character->bUseControllerRotationYaw = true;
+
+    if (NiagaraComponent)
+    {
+        NiagaraComponent->DeactivateImmediate();
+        NiagaraComponent->DestroyComponent();
+    }
+
+    if (IsValid(GlidingDataAsset) && IsValid(GlidingDataAsset->ForceFeedbackGlideLoop))
+        GetWorld()->GetFirstPlayerController()->ClientStopForceFeedback(GlidingDataAsset->ForceFeedbackGlideLoop, NAME_None);
     
     bIsGliding = false;
 }
@@ -134,7 +197,50 @@ bool UMP_GlidingComponent::GetIsGliding()
     return bIsGliding;
 }
 
+float UMP_GlidingComponent::GetDuration()
+{
+    if (IsValid(GlidingDataAsset))
+        return CurrentDuration / GlidingDataAsset->Duration;
+
+    return -1.0f;
+}
+
 void UMP_GlidingComponent::SetHasJump(bool bInHasJump)
 {
     bHasJump = bInHasJump;
+}
+
+bool UMP_GlidingComponent::DetectWallRunCollision()
+{
+    // Trace to detect Wall Run
+    const auto* World =  GetWorld();
+    
+    const FVector StartTrace = GetOwner()->GetActorLocation();
+    const FCollisionShape SphereShape = FCollisionShape::MakeSphere(TraceRadius);
+    
+    FCollisionQueryParams Params(SCENE_QUERY_STAT(TraceForwardSingle), false, GetOwner());
+    Params.bReturnPhysicalMaterial = false;
+
+    FHitResult OutHit;
+    const bool bHit = World->SweepSingleByChannel(
+        OutHit,
+        StartTrace,
+        StartTrace,
+        FQuat::Identity,
+        WallRunCollisionChannel,
+        SphereShape,
+        Params
+    );
+
+    if (bDrawDebug)
+    {
+        const FColor Color = bHit ? FColor::Red : FColor::Green;
+        DrawDebugLine(World, StartTrace, StartTrace, Color, false, -1.0f, 0, 1.0f);
+        DrawDebugSphere(World, StartTrace, TraceRadius, 12, Color, false, -1.0f);
+        if (bHit)
+        {
+            DrawDebugSphere(World, OutHit.ImpactPoint, TraceRadius * 0.5f, 12, FColor::Yellow, false, 1.2f);
+        }
+    }
+    return bHit;
 }

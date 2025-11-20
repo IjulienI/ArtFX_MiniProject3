@@ -29,4 +29,14 @@ public:
     float FallingBreakingFriction = 600.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "1", ClampMax = "100"), Category = "PickUp|Health")
 	int HealthGain = 1;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0.0", ClampMax = "1500.0", EditConditionHides), Category = "Player")
+	float TargetArmLengh = 450.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player|CameraLag")
+	bool bCameraLag = true;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0.0", ClampMax = "50.0", EditCondition = "bCameraLag", EditConditionHides), Category = "Player|CameraLag")
+	float CameraLagForce = 12.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player|CameraLag", meta = (EditCondition = "bCameraLag", EditConditionHides))
+	FVector SocketOffset = FVector(0.0f, 0.0f, 60.0f);
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player|CameraLag", meta = (EditCondition = "bCameraLag", EditConditionHides))
+	FVector TargetOffset = FVector(0.0f, 0.0f, 0.0f);
 };
