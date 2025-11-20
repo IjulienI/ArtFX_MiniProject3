@@ -29,4 +29,6 @@ public:
 	float JumpOfWallUpAngleDirection = 20.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0.0", ClampMax = "1000.0"), Category = "WallRun")
 	float JumpVelBeforeWallRunStop = 300.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0.0", ClampMax = "1000.0"), Category = "WallRun")
+	float HeightBeforeWallRun = 100.0f;
 };
