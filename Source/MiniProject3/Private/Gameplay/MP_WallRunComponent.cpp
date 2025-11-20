@@ -28,6 +28,8 @@ void UMP_WallRunComponent::ResetJumpCount()
 	auto Character = Cast<AMP_BaseCharacter>(Owner);
 	if (!Character) return;
 	Character->ResetJumpState();
+	Character->JumpCurrentCount = 0;
+	Character->JumpCurrentCountPreJump = 0;
 }
 
 
