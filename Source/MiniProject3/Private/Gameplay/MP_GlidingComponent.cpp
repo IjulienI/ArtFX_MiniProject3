@@ -91,6 +91,9 @@ void UMP_GlidingComponent::TickComponent(float DeltaTime, enum ELevelTick TickTy
     const float NewDuration = CurrentDuration - 1.0f *  DeltaTime;
     CurrentDuration = FMath::Clamp(NewDuration, 0, GlidingDataAsset->Duration);
 
+    if (IsValid(NiagaraComponent))
+        NiagaraComponent->SetFloatParameter(GlidingDataAsset->NiagaraDurationUserParameterName, CurrentDuration);
+
     // If Duration == 0, stop gliding
     if (CurrentDuration <= 0)
     {
@@ -146,9 +149,6 @@ void UMP_GlidingComponent::OnGliding()
     CharacterMovementComponent->GravityScale = GlidingDataAsset->GravityScale;
     CharacterMovementComponent->AirControl = GlidingDataAsset->AirControl;
     CharacterMovementComponent->RotationRate = GlidingDataAsset->RotationRate;
-
-    // ResetJump
-    Character->JumpCurrentCount = 2;
 
     if (IsValid(GlidingDataAsset) && IsValid(GlidingDataAsset->NiagaraEffect) && !IsValid(NiagaraComponent))
     {        

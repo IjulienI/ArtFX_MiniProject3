@@ -48,6 +48,9 @@ public:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Glide|Effect")
     FName NiagaraComponentTag = NAME_None;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Glide|Effect")
+    FName NiagaraDurationUserParameterName = NAME_None;
     
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Glide|Effect")
     UNiagaraSystem* NiagaraEffect = nullptr;

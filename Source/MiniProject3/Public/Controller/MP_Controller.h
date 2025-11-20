@@ -5,6 +5,7 @@
 #include "GameFramework/PlayerController.h"
 #include "MP_Controller.generated.h"
 
+class UMP_GlidingComponent;
 class UMP_GlidingController;
 class UMP_SlidingController;
 class UMP_WallRunController;
@@ -70,6 +71,7 @@ protected:
     TWeakObjectPtr<UMP_WallRunController> WallRunController;
     TWeakObjectPtr<UMP_DashController> DashController;
     TWeakObjectPtr<UMP_GlidingController> GlidingController;
+    TWeakObjectPtr<UMP_GlidingComponent> GlidingComponent;
 
     UPROPERTY(EditDefaultsOnly, Category = "EnhancedInput|Mouse", meta = (ClampMin = 0.1f, ClampMax = 100.0f))
     float SensitivityX = 0.8f;
