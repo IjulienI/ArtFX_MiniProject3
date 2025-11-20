@@ -7,6 +7,7 @@
 
 #include "DataAsset/MP_PlayerDataAsset.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 
 
 void AMP_BaseCharacter::BeginPlay()
@@ -25,6 +26,16 @@ void AMP_BaseCharacter::BeginPlay()
             CharacterMovement->JumpZVelocity = PlayerDataAsset->JumpVelocity;
             CharacterMovement->MaxWalkSpeed = PlayerDataAsset->WalkSpeed;
             CharacterMovement->BrakingDecelerationFalling = PlayerDataAsset->FallingBreakingFriction;
+        }
+
+        auto SpringArm = GetComponentByClass<USpringArmComponent>();
+        if (SpringArm)
+        {
+            SpringArm->TargetArmLength = PlayerDataAsset->TargetArmLengh;
+            SpringArm->bEnableCameraLag = PlayerDataAsset->bCameraLag;
+            SpringArm->CameraLagSpeed = PlayerDataAsset->CameraLagForce;
+            SpringArm->SocketOffset = PlayerDataAsset->SocketOffset;
+            SpringArm->TargetOffset = PlayerDataAsset->TargetOffset;
         }
     }
 }
