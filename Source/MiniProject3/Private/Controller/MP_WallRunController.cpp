@@ -4,7 +4,10 @@
 #include "Controller/MP_WallRunController.h"
 
 #include "EnhancedInputComponent.h"
+#include "GameFramework/Character.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Gameplay/MP_WallRunComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 UMP_WallRunController::UMP_WallRunController()
 {
@@ -40,5 +43,9 @@ void UMP_WallRunController::BeginPlay()
 
 void UMP_WallRunController::JumpOfWall()
 {
+	if (UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)->GetCharacterMovement()->IsMovingOnGround())
+	{
+		WallRunComponent->StartJumpHeight();
+	}
 	WallRunComponent->JumpOfWall();
 }
