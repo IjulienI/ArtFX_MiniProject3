@@ -56,6 +56,7 @@ protected:
 	float ActualDashTime = 0.f;
 
 protected:
+	UFUNCTION(BlueprintCallable, Category = "Dash")
 	void ResetCooldown();
 	void ActualiseDashTimeline();
 	//End of Cooldown
