@@ -26,6 +26,9 @@ public:
     UFUNCTION(BlueprintCallable, BlueprintPure, Category="Sliding")
     bool GetIsGliding();
 
+    UFUNCTION(BlueprintCallable, BlueprintPure, Category="Sliding")
+    float GetDuration();
+
     // Setter
     void SetHasJump(bool bInHasJump);
 
@@ -78,6 +81,9 @@ protected:
     // System Variables
     UPROPERTY(BlueprintReadOnly, Category="Glide")
     bool bIsGliding = false;
+
+    UPROPERTY(BlueprintReadOnly, Category="Glide")
+    float CurrentDuration = 0.0f;
 
     UPROPERTY(BlueprintReadOnly, Category="Glide")
     UNiagaraComponent* NiagaraComponent = nullptr;
