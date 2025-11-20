@@ -6,6 +6,7 @@
 #include "Engine/DataAsset.h"
 #include "MP_GlideDataAsset.generated.h"
 
+class UNiagaraSystem;
 /**
  * 
  */
@@ -29,4 +30,16 @@ public:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Glide")
     FRotator RotationRate = FRotator(0.0f, 0.0f, 120.0f);
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Glide|Rumble")
+    UForceFeedbackEffect* ForceFeedbackStartGlide = nullptr;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Glide|Rumble")
+    UForceFeedbackEffect* ForceFeedbackGlideLoop = nullptr;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Glide|Effect")
+    FName NiagaraComponentTag = NAME_None;
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Glide|Effect")
+    UNiagaraSystem* NiagaraEffect = nullptr;
 };

@@ -7,6 +7,7 @@
 #include "MP_GlidingComponent.generated.h"
 
 
+class UNiagaraComponent;
 class UCharacterMovementComponent;
 class UMP_GlideDataAsset;
 
@@ -54,11 +55,14 @@ protected:
     UMP_GlideDataAsset* GlidingDataAsset = nullptr;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Glide")
-    UForceFeedbackEffect* ForceFeedbackEffect = nullptr;
-    
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Glide")
-    bool bIsGliding = false;
+    bool bDrawDebug = true;
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Glide|Trace")
+    TEnumAsByte<ECollisionChannel> WallRunCollisionChannel = ECollisionChannel::ECC_EngineTraceChannel1;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Glide|Trace")
+    float TraceRadius = 100.0f;
+    
     // HIDDEN SETTINGS ------------------------------------------------------------------------
     
     // References
@@ -67,6 +71,13 @@ protected:
 
     UPROPERTY(BlueprintReadOnly, Category="Glide")
     TWeakObjectPtr<UCharacterMovementComponent> CharacterMovementComponent;
+
+    // System Variables
+    UPROPERTY(BlueprintReadOnly, Category="Glide")
+    bool bIsGliding = false;
+
+    UPROPERTY(BlueprintReadOnly, Category="Glide")
+    UNiagaraComponent* NiagaraComponent = nullptr;
 
     // Owner Variables Cache
     UPROPERTY(BlueprintReadOnly, Category="Glide")
@@ -79,6 +90,8 @@ protected:
     FRotator PreviousRotationRate = FRotator::ZeroRotator;
 
 private:
+    bool DetectWallRunCollision();
+    
     bool bHasJump = false;
     bool bAskGlide = false;
 };
