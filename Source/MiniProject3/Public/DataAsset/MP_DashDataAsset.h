@@ -24,4 +24,6 @@ public:
 	float DashLinearSpeed = 3000.f;
 	UPROPERTY(EditAnywhere, Category = "Speed")
 	float FallDistanceFactorAfterDash = 1;
+	UPROPERTY(EditAnywhere, Category = "SFX")
+	TObjectPtr<class USoundBase> DashSFX = nullptr;
 };
