@@ -28,6 +28,8 @@ public:
     virtual void AddPitchInput(float Val) override;
     virtual void AddYawInput(float Val) override;
 
+
+
 protected:
     // Overrides
     virtual void SetupInputComponent() override;
@@ -43,6 +45,10 @@ protected:
     void StartJumpPlayer(const FInputActionValue& Value);
     void StopJumpPlayer(const FInputActionValue& Value);
 
+    // Pause
+    //UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+    UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+    void CallPauseMenu();
 
 protected:
     // Inputs
@@ -60,6 +66,9 @@ protected:
 
     UPROPERTY(EditDefaultsOnly, Category = "EnhancedInput")
     TObjectPtr<UInputAction> InputActionJump;
+
+    UPROPERTY(EditDefaultsOnly, Category = "EnhancedInput")
+    TObjectPtr<UInputAction> InputActionPause;
 
     TWeakObjectPtr<AMP_BaseCharacter> Character;
     TWeakObjectPtr<UCharacterMovementComponent> CharacterMovementComponent;
