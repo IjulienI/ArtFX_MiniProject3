@@ -92,7 +92,7 @@ void UMP_GlidingComponent::TickComponent(float DeltaTime, enum ELevelTick TickTy
     CurrentDuration = FMath::Clamp(NewDuration, 0, GlidingDataAsset->Duration);
 
     if (IsValid(NiagaraComponent))
-        NiagaraComponent->SetFloatParameter(GlidingDataAsset->NiagaraDurationUserParameterName, CurrentDuration);
+        NiagaraComponent->SetFloatParameter(GlidingDataAsset->NiagaraDurationUserParameterName, GetDuration());
 
     // If Duration == 0, stop gliding
     if (CurrentDuration <= 0)

@@ -2,6 +2,9 @@
 
 
 #include "Gameplay/MP_DashComponent.h"
+
+#include "CollisionDebugDrawingPublic.h"
+#include "Components/CapsuleComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 #include "Gameplay/MP_BaseCharacter.h"
@@ -79,12 +82,25 @@ void UMP_DashComponent::OnDashInputPressed()
 	Params.AddIgnoredActor(Character.Get());
 	FHitResult HitResult;
 
+	const float CapsuleHeigth = Character->GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
+	const float CapsuleRadius = Character->GetCapsuleComponent()->GetScaledCapsuleRadius() * 1.1f;
+
+	const FCollisionShape Caspule = FCollisionShape::MakeCapsule(FVector( CapsuleRadius,CapsuleRadius,CapsuleHeigth ));
+
 	//Lauch raycast
-	const bool bHit = GetWorld()->SweepSingleByChannel(HitResult, RaycastStart, RaycastEnd, FQuat::Identity, DashCollisionChannel, FCollisionShape::MakeCapsule({ 1,1,1 }), Params);
+	const bool bHit = GetWorld()->SweepSingleByChannel(HitResult, RaycastStart, RaycastEnd, FQuat::Identity, DashCollisionChannel, Caspule, Params);
+
+	DrawDebugCapsule(GetWorld(), RaycastStart, CapsuleHeigth, CapsuleRadius, FQuat::Identity, FColor::Red, false, 2.0f);
+	if (HitResult.bBlockingHit)
+	{
+		DrawDebugCapsule(GetWorld(), HitResult.Location, CapsuleHeigth, CapsuleRadius, FQuat::Identity, FColor::Yellow, false, 2.0f);
+	}
+	DrawDebugLine(GetWorld(), RaycastStart, RaycastEnd, FColor::Black, false, 2.0f);
+	DrawDebugCapsule(GetWorld(), RaycastEnd, CapsuleHeigth, CapsuleRadius, FQuat::Identity, FColor::Red, false, 2.0f);
 		
 	if(bHit)
 	{
-		RaycastEnd = HitResult.ImpactPoint;
+		FinishPose = HitResult.ImpactPoint;
 	}
 
 	ActualDashTime = 0;
@@ -116,7 +132,13 @@ void UMP_DashComponent::ResetCooldown()
 void UMP_DashComponent::ActualiseDashTimeline()
 {
 	ActualDashTime += GetWorld()->GetDeltaSeconds();
-
+	if (FinishPose == Character->GetActorLocation()) 
+	{
+		bDashInAir = false;
+		bInDash = false;
+		Character->GetCharacterMovement()->Velocity = FVector::ZeroVector;
+		return;
+	}
 	if (DashDataAsset->bUseSpeedCurve && DashDataAsset->DashSpeedCurve != nullptr && ActualDashTime * DashDataAsset->DashPlayRate < 0.9)
 	{		
 		// Dash whith speed curve
