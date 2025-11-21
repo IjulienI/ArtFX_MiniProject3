@@ -5,6 +5,7 @@
 
 #include "CollisionDebugDrawingPublic.h"
 #include "Components/CapsuleComponent.h"
+#include "Sound/SoundCue.h"
 #include "Kismet/GameplayStatics.h"
 
 #include "Gameplay/MP_BaseCharacter.h"
@@ -109,6 +110,9 @@ void UMP_DashComponent::OnDashInputPressed()
 	LastVelocity = Character->GetCharacterMovement()->Velocity;
 	Character->GetCharacterMovement()->Velocity = FVector::ZeroVector;
 	Character->GetCharacterMovement()->StopMovementImmediately();
+
+	//Play sound
+	UGameplayStatics::PlaySound2D(this, DashDataAsset->DashSFX);
 }
 
 void UMP_DashComponent::StopDash()
