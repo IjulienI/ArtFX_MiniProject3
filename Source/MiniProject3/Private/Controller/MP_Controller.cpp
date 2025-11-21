@@ -36,6 +36,7 @@ void AMP_Controller::SetupInputComponent()
     EnhancedInputComponent->BindAction(InputActionSprint, ETriggerEvent::Completed, this, &AMP_Controller::StopSprintPlayer);
     EnhancedInputComponent->BindAction(InputActionJump, ETriggerEvent::Started, this, &AMP_Controller::StartJumpPlayer);
     EnhancedInputComponent->BindAction(InputActionJump, ETriggerEvent::Completed, this, &AMP_Controller::StopJumpPlayer);
+    EnhancedInputComponent->BindAction(InputActionPause, ETriggerEvent::Triggered, this, &AMP_Controller::CallPauseMenu);
 }
 
 void AMP_Controller::SetPawn(APawn* InPawn)

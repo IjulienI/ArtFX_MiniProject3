@@ -42,6 +42,7 @@ protected:
 	TEnumAsByte<ETraceTypeQuery> DashTraceChannel;
 	ECollisionChannel DashCollisionChannel;
 	FVector RaycastStart;
+	FVector FinishPose;
 	FVector RaycastEnd;
 	FVector LastVelocity;
 	//End of collisions	
