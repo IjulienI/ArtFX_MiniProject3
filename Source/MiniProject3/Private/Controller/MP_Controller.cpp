@@ -84,18 +84,20 @@ void AMP_Controller::MovePlayer(const FInputActionValue& Value)
     if (!ensure(Character.IsValid())) return;
 
     const auto MoveValue = Value.Get<FVector2D>();
+
+    const FRotator CameraRotation = GetWorld()->GetFirstPlayerController()->PlayerCameraManager->GetCameraRotation();
     
     if (MoveValue.X)
     {
         float value = bIsOnWall ? 0.0f :MoveValue.X;
-        Character->AddMovementInput(Character->GetActorRightVector(), value);
+        Character->AddMovementInput(FRotationMatrix(CameraRotation).GetScaledAxis(EAxis::Y), value);
     }
     if (MoveValue.Y)
     {
         float value = MoveValue.Y > 0 ? 1.0f : MoveValue.Y;
         value = bIsOnWall ? value : MoveValue.Y;
         
-        FVector Dir = bIsOnWall ? OverrideDirection : Character->GetActorForwardVector();
+        FVector Dir = bIsOnWall ? OverrideDirection : FRotationMatrix(CameraRotation).GetScaledAxis(EAxis::X);
         Character->AddMovementInput(Dir, value);
     }
 }
