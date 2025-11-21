@@ -116,7 +116,6 @@ void UMP_DashComponent::ResetCooldown()
 void UMP_DashComponent::ActualiseDashTimeline()
 {
 	ActualDashTime += GetWorld()->GetDeltaSeconds();
-
 	if (DashDataAsset->bUseSpeedCurve && DashDataAsset->DashSpeedCurve != nullptr && ActualDashTime * DashDataAsset->DashPlayRate < 0.9)
 	{		
 		// Dash whith speed curve
