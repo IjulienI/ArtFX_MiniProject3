@@ -20,9 +20,32 @@ public:
     TObjectPtr<class UMP_PlayerDataAsset> PlayerDataAsset{nullptr};
 
     TObjectPtr<UCharacterMovementComponent> CharacterMovement{nullptr};
-    
+
+	virtual void Tick(float DeltaSeconds) override;
+	
     virtual void Jump() override;
     virtual void Landed(const FHitResult& Hit) override;
+
+    
+    UFUNCTION(BlueprintCallable)
+    void StartCoyoteTimer();
+	
+    UFUNCTION(BlueprintCallable)
+    void DisableCoyoteTime();
+	
+    UPROPERTY()
+    bool bCanCoyoteJump = false;
+	
+    UPROPERTY(EditAnywhere)
+    float CoyoteTime = 0.3f;
+
+    UPROPERTY(EditAnywhere)
+    FTimerHandle CoyoteTimerHandle;
+	
+    virtual bool CanJumpInternal_Implementation() const override;
+    virtual void Falling() override;
+    virtual void OnJumped_Implementation() override;
+    virtual void OnMovementModeChanged(EMovementMode PrevMovementMode, uint8 PreviousCustomMode = 0) override;
 
 protected:
     UPROPERTY(BlueprintReadWrite, Category = "Player")

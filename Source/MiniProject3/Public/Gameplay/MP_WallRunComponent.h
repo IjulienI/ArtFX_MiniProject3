@@ -30,6 +30,9 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void JumpOfWall();
 	void StartJumpHeight();
+
+	UFUNCTION(BlueprintCallable)
+	void BypassJumpHeight();
 	
 	UFUNCTION(BlueprintCallable)
 	void ResetJumpCount();
