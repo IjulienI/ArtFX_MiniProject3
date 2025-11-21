@@ -43,9 +43,6 @@ void UMP_WallRunController::BeginPlay()
 
 void UMP_WallRunController::JumpOfWall()
 {
-	if (UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)->GetCharacterMovement()->IsMovingOnGround())
-	{
-		WallRunComponent->StartJumpHeight();
-	}
+	WallRunComponent->StartJumpHeight();
 	WallRunComponent->JumpOfWall();
 }
