@@ -33,6 +33,5 @@ void AMP_CheckPoint::OnCheckpointOverlap(UPrimitiveComponent* OverlappedComponen
 	}
 	RespawnTransform.SetLocation(RespawnTransform.GetLocation() + AActor::GetActorLocation());
 	RespawnComponent->SetRespawnPoint(RespawnTransform);
-	Destroy();
 }
 
