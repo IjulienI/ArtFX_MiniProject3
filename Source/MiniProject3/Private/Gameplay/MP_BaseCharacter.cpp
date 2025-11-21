@@ -45,13 +45,6 @@ AMP_BaseCharacter::AMP_BaseCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 }
 
-void AMP_BaseCharacter::Tick(float DeltaSeconds)
-{
-	Super::Tick(DeltaSeconds);
-	GEngine->AddOnScreenDebugMessage(-1, 0.5, FColor::Red,
-	                                 FString::Printf(TEXT("JumpCount = %d"), JumpCurrentCount));
-}
-
 void AMP_BaseCharacter::Jump()
 {
 	if (bCanCoyoteJump && GetCharacterMovement() && GetCharacterMovement()->IsFalling())

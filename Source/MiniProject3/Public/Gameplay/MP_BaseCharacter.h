@@ -20,8 +20,6 @@ public:
     TObjectPtr<class UMP_PlayerDataAsset> PlayerDataAsset{nullptr};
 
     TObjectPtr<UCharacterMovementComponent> CharacterMovement{nullptr};
-
-	virtual void Tick(float DeltaSeconds) override;
 	
     virtual void Jump() override;
     virtual void Landed(const FHitResult& Hit) override;
