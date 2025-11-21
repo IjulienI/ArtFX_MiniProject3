@@ -100,7 +100,7 @@ void UMP_DashComponent::OnDashInputPressed()
 		
 	if(bHit)
 	{
-		RaycastEnd = HitResult.ImpactPoint;
+		FinishPose = HitResult.ImpactPoint;
 	}
 
 	ActualDashTime = 0;
@@ -132,7 +132,13 @@ void UMP_DashComponent::ResetCooldown()
 void UMP_DashComponent::ActualiseDashTimeline()
 {
 	ActualDashTime += GetWorld()->GetDeltaSeconds();
-
+	if (FinishPose == Character->GetActorLocation()) 
+	{
+		bDashInAir = false;
+		bInDash = false;
+		Character->GetCharacterMovement()->Velocity = FVector::ZeroVector;
+		return;
+	}
 	if (DashDataAsset->bUseSpeedCurve && DashDataAsset->DashSpeedCurve != nullptr && ActualDashTime * DashDataAsset->DashPlayRate < 0.9)
 	{		
 		// Dash whith speed curve
