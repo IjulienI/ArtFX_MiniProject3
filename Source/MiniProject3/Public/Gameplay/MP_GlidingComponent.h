@@ -58,7 +58,7 @@ protected:
     UMP_GlideDataAsset* GlidingDataAsset = nullptr;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Glide")
-    bool bDrawDebug = true;
+    bool bDrawDebug = false;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Glide|Trace")
     TEnumAsByte<ECollisionChannel> WallRunCollisionChannel = ECollisionChannel::ECC_EngineTraceChannel1;
