@@ -34,7 +34,5 @@ void AMP_CheckPoint::OnCheckpointOverlap(UPrimitiveComponent* OverlappedComponen
 	FTransform WorldRespawnTransform = RespawnTransform * GetActorTransform();
 
 	RespawnComponent->SetRespawnPoint(WorldRespawnTransform);
-	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Green, FString::Printf(TEXT("Respawn Transform : {%f, %f, %f}"), RespawnTransform.GetLocation().X, RespawnTransform.GetLocation().Y, RespawnTransform.GetLocation().Z));
-
 }
 
